@@ -40,26 +40,15 @@ const dots = Array.from(document.querySelectorAll(".carousel-dot"));
 const announcement = document.querySelector("#carousel-announcement");
 const heroImages = slides.map((_, index) => `assets/hero-${String(index + 1).padStart(2, "0")}.webp`);
 let activeSlide = 0;
-let transitionTimeout;
 
 heroImages.forEach((source) => {
   const image = new Image();
   image.src = source;
 });
 
-function showSlide(index, animate = true) {
+function showSlide(index) {
   activeSlide = (index + slides.length) % slides.length;
-  if (transitionTimeout) window.clearTimeout(transitionTimeout);
-  if (animate) {
-    hero.classList.add("is-transitioning");
-    transitionTimeout = window.setTimeout(() => {
-      hero.style.setProperty("--hero-image", `url("${heroImages[activeSlide]}")`);
-      hero.classList.remove("is-transitioning");
-      transitionTimeout = undefined;
-    }, 180);
-  } else {
-    hero.style.setProperty("--hero-image", `url("${heroImages[activeSlide]}")`);
-  }
+  hero.style.setProperty("--hero-image", `url("${heroImages[activeSlide]}")`);
   title.innerHTML = slides[activeSlide].title;
   description.textContent = slides[activeSlide].description;
   dots.forEach((dot, dotIndex) => {
@@ -74,7 +63,7 @@ function showSlide(index, animate = true) {
   announcement.textContent = `Slide ${activeSlide + 1} of ${slides.length}`;
 }
 
-showSlide(0, false);
+showSlide(0);
 document.querySelector("#slide-prev").addEventListener("click", () => showSlide(activeSlide - 1));
 document.querySelector("#slide-next").addEventListener("click", () => showSlide(activeSlide + 1));
 dots.forEach((dot, index) => dot.addEventListener("click", () => showSlide(index)));

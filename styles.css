@@ -12,6 +12,12 @@
   --sans: "DM Sans", "Segoe UI", sans-serif;
 }
 
+@property --card-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 body[data-font-theme="editorial"] {
   --serif: "Lora", Georgia, serif;
   --sans: "Manrope", "Segoe UI", sans-serif;
@@ -57,8 +63,7 @@ button { color: inherit; }
 .menu-toggle { display: none; }
 
 .hero { position: relative; min-height: 570px; padding: 86px 10.1% 74px; display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; overflow: hidden; background: #eeefe7; }
-.hero::before { position: absolute; inset: 0; z-index: 0; content: ""; background-image: linear-gradient(90deg, rgba(248,247,242,.96) 0%, rgba(248,247,242,.88) 43%, rgba(248,247,242,.48) 100%), var(--hero-image); background-position: center, center; background-size: cover, cover; opacity: 1; pointer-events: none; transition: opacity .3s ease; }
-.hero.is-transitioning::before { opacity: .35; }
+.hero::before { position: absolute; inset: 0; z-index: 0; content: ""; background-image: linear-gradient(90deg, rgba(248,247,242,.96) 0%, rgba(248,247,242,.88) 43%, rgba(248,247,242,.48) 100%), var(--hero-image); background-position: center, center; background-size: cover, cover; background-repeat: no-repeat, no-repeat; opacity: 1; pointer-events: none; }
 .hero-copy { max-width: 530px; position: relative; z-index: 2; }
 .eyebrow, .section-label { display: flex; align-items: center; gap: 10px; color: var(--green); text-transform: uppercase; font-size: 10px; font-weight: 700; letter-spacing: .15em; }
 .eyebrow { margin: 0 0 22px; }
@@ -103,14 +108,17 @@ h2 { font-size: clamp(35px, 4vw, 48px); line-height: 1.2; margin-bottom: 0; }
 .section-heading > p { max-width: 330px; margin: 0 0 4px; color: var(--muted); font-size: 12px; line-height: 1.8; }
 .work-grid { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 15px; }
 .work-card { position: relative; min-height: 258px; overflow: hidden; padding: 25px 25px 22px; background: var(--white); }
+.work-card::before { position: absolute; z-index: 2; inset: 0; padding: 1px; content: ""; pointer-events: none; background: conic-gradient(from var(--card-border-angle), transparent 0deg 275deg, rgba(189,118,88,.25) 300deg, #bd7658 322deg, #d7bc99 340deg, transparent 360deg); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; animation: card-border-flow 8s linear infinite; }
+@keyframes card-border-flow { to { --card-border-angle: 360deg; } }
+.work-card > :not(.card-decoration) { position: relative; z-index: 1; }
 .work-card-feature { background: var(--green-dark); color: white; }
 .card-icon { width: 42px; height: 42px; margin-bottom: 16px; color: var(--green); }
 .card-icon svg { width: 100%; height: 100%; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .work-card-feature .card-icon { color: #d7bc99; }
-.card-index { color: #879188; font-size: 9px; letter-spacing: .12em; }
+.card-index { color: #879188; font-size: 9px; font-weight: 700; letter-spacing: .16em; }
 .work-card-feature .card-index { color: #c4cfbf; }
-.work-card h3 { margin: 9px 0 8px; font-family: var(--serif); font-size: 20px; font-weight: 500; }
-.work-card p { position: relative; z-index: 1; max-width: 285px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.75; }
+.work-card h3 { margin: 9px 0 8px; font-family: var(--sans); font-size: 18px; font-weight: 600; letter-spacing: -.035em; }
+.work-card p { position: relative; z-index: 1; max-width: 285px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
 .work-card-feature p { color: #d2dacf; }
 .card-decoration { position: absolute; right: 5px; bottom: -73px; color: rgba(255,255,255,.07); font-family: var(--serif); font-size: 190px; line-height: 1; }
 
@@ -260,4 +268,5 @@ body.dialog-open .dialog-backdrop { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  .work-card::before { animation: none; }
 }
