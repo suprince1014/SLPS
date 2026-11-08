@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Saurashtra Leuva Patel Samaj Vapi — serving our community and preserving culture since 2007."
+    />
+    <meta name="theme-color" content="#f8f7f2" />
+    <title>SLPS Vapi | Together in Community</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Lora:wght@500;600;700&family=Montserrat:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="SLPS Vapi home">
+        <span class="brand-mark" aria-hidden="true">
+          <img class="brand-logo" src="assets/logo.webp" alt="" />
+        </span>
+        <span class="brand-copy">
+          <strong>SLPS VAPI</strong>
+          <small>Saurashtra Leuva Patel Samaj</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Main navigation">
+        <a href="#about">About</a>
+        <a href="#work">Our work</a>
+        <a href="#community">Community</a>
+        <a href="#leadership">Leadership</a>
+        <a href="#contact">Contact</a>
+        <button class="button button-small button-outline" type="button" data-open-auth>Member login</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="home" aria-label="Welcome to SLPS Vapi">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Saurashtra Leuva Patel Samaj · Vapi</p>
+          <h1 id="hero-title">A community that<br /><em>grows together.</em></h1>
+          <p class="hero-description" id="hero-description">
+            Celebrating our roots, supporting one another, and building a brighter future for every generation.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#about">Discover our Samaj <span aria-hidden="true">↗</span></a>
+            <button class="text-button" type="button" data-open-auth>Become a member <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="hero-proof">
+            <div class="proof-seal" aria-hidden="true">SLPS</div>
+            <p><strong>Rooted in Vapi since 2007</strong><br />A place to connect, contribute and belong.</p>
+          </div>
+        </div>
+        <div class="carousel-controls" role="group" aria-label="Hero image controls">
+          <button class="carousel-arrow" id="slide-prev" type="button" aria-label="Previous slide">←</button>
+          <div class="carousel-dots" role="group" aria-label="Choose a hero image">
+            <button class="carousel-dot is-active" type="button" aria-label="Slide 1" aria-current="true"></button>
+            <button class="carousel-dot" type="button" aria-label="Slide 2"></button>
+            <button class="carousel-dot" type="button" aria-label="Slide 3"></button>
+            <button class="carousel-dot" type="button" aria-label="Slide 4"></button>
+            <button class="carousel-dot" type="button" aria-label="Slide 5"></button>
+            <button class="carousel-dot" type="button" aria-label="Slide 6"></button>
+            <button class="carousel-dot" type="button" aria-label="Slide 7"></button>
+            <button class="carousel-dot" type="button" aria-label="Slide 8"></button>
+          </div>
+          <button class="carousel-arrow" id="slide-next" type="button" aria-label="Next slide">→</button>
+        </div>
+      </section>
+
+      <section class="intro section-wrap" id="about">
+        <div class="section-label"><span>01</span> A little about us</div>
+        <div class="intro-content">
+          <h2>Honouring our heritage.<br /><em>Empowering our people.</em></h2>
+          <div class="intro-text">
+            <p>
+              Saurashtra Leuva Patel Samaj (SLPS) Vapi is a community organization and social institution established in 2007. We bring people together to preserve Indian culture and heritage, support education and philanthropy, and stand alongside members of our community who need a helping hand.
+            </p>
+            <a class="inline-link" href="#work">Get to know our work <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="values-strip">
+          <div><span class="value-icon">01</span><span><strong>Culture & heritage</strong><small>Keeping traditions alive across generations.</small></span></div>
+          <div><span class="value-icon">02</span><span><strong>Education & opportunity</strong><small>Encouraging learning and helping people thrive.</small></span></div>
+          <div><span class="value-icon">03</span><span><strong>Care & philanthropy</strong><small>Supporting those in our community who need it.</small></span></div>
+        </div>
+      </section>
+
+      <section class="work-section" id="work">
+        <div class="section-wrap">
+          <div class="section-heading">
+            <div>
+              <div class="section-label"><span>02</span> What brings us together</div>
+              <h2>Many ways to <em>make a difference.</em></h2>
+            </div>
+            <p>Our Samaj is built on small acts of service, shared experiences and the strength of people showing up for one another.</p>
+          </div>
+          <div class="work-grid">
+            <article class="work-card work-card-feature">
+              <div class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 40 40" fill="none"><path d="M20 34s-13-7.5-13-17a7 7 0 0 1 13-3.5A7 7 0 0 1 33 17c0 9.5-13 17-13 17Z" /><path d="M13 21h5l2-4 3 8 2-4h3" /></svg>
+              </div>
+              <span class="card-index">01 / SERVICE</span>
+              <h3>Here for each other</h3>
+              <p>We work to support disadvantaged members of the Leuva Patel community with care, dignity and a spirit of giving.</p>
+              <span class="card-decoration" aria-hidden="true">S</span>
+            </article>
+            <article class="work-card">
+              <div class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 40 40" fill="none"><path d="M8 32V13l12-7 12 7v19H8Z" /><path d="M15 32V21h10v11M13 15h.01M20 15h.01M27 15h.01" /></svg>
+              </div>
+              <span class="card-index">02 / HERITAGE</span>
+              <h3>Culture, shared</h3>
+              <p>Community gatherings and cultural events keep our traditions close and create memories across generations.</p>
+            </article>
+            <article class="work-card">
+              <div class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 40 40" fill="none"><path d="M7 32h26M10 32V17l10-7 10 7v15M16 32V22h8v10M6 17l14-10 14 10" /><path d="M18 16h4" /></svg>
+              </div>
+              <span class="card-index">03 / COMMUNITY</span>
+              <h3>A space to belong</h3>
+              <p>Our community spaces bring people together for meaningful occasions, connection and celebration.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="community-section section-wrap" id="community">
+        <div class="community-art" aria-hidden="true">
+          <div class="community-orbit orbit-one"></div>
+          <div class="community-orbit orbit-two"></div>
+          <div class="community-center"><span>સાથ</span><small>TOGETHER</small></div>
+          <span class="orbit-tag tag-top">Culture</span>
+          <span class="orbit-tag tag-right">Education</span>
+          <span class="orbit-tag tag-bottom">Service</span>
+          <span class="orbit-tag tag-left">Community</span>
+        </div>
+        <div class="community-copy">
+          <div class="section-label"><span>03</span> More than a place</div>
+          <h2>Good things happen<br />when we <em>come together.</em></h2>
+          <p>From cultural celebrations to everyday acts of support, every gathering is an opportunity to strengthen the bonds that make a community feel like family.</p>
+          <a class="button button-primary" href="#contact">Connect with SLPS <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section class="leadership-section" id="leadership">
+        <div class="section-wrap">
+          <div class="leadership-heading">
+            <div class="section-label"><span>04</span> Guided by service</div>
+            <h2>Leadership with<br /><em>community at heart.</em></h2>
+            <p>Our trustees and volunteers help carry forward the Samaj's purpose. Get in touch with us to connect with the current leadership team.</p>
+            <a class="inline-link" href="mailto:slpsvapi@gmail.com">Contact the Samaj <span aria-hidden="true">↗</span></a>
+          </div>
+          <article class="trustee-profile">
+            <img class="trustee-photo" src="assets/kanudesai.webp" alt="Shri Kanubhai Desai" />
+            <div class="trustee-info">
+              <div class="section-label"><span>TRUSTEE</span> Public service</div>
+              <h3>Shri Kanubhai<br /><em>Desai</em></h3>
+              <p>Shri Kanubhai Mohanlal Desai represents Pardi in the Gujarat Legislative Assembly and has served in the state cabinet, including responsibilities for Finance, Energy and Petrochemicals.</p>
+              <div class="trustee-roles">
+                <span>Finance Minister, Gujarat</span>
+                <span>MLA, Pardi</span>
+              </div>
+              <a class="trustee-source" href="https://en.wikipedia.org/wiki/Kanubhai_Desai" target="_blank" rel="noopener noreferrer">Read more about his public service <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="contact-section section-wrap" id="contact">
+        <div class="contact-heading">
+          <div class="section-label"><span>05</span> We'd love to hear from you</div>
+          <h2>Let's stay<br /><em>connected.</em></h2>
+          <p>Whether you have a question, want to learn more, or simply want to say hello, our doors are open.</p>
+        </div>
+        <div class="contact-details">
+          <a class="contact-item" href="tel:+916356555500">
+            <span class="contact-icon" aria-hidden="true">↗</span>
+            <span><small>Call us</small><strong>+91 63565 55500</strong></span>
+            <span class="contact-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="contact-item" href="mailto:slpsvapi@gmail.com">
+            <span class="contact-icon" aria-hidden="true">@</span>
+            <span><small>Email us</small><strong>slpsvapi@gmail.com</strong></span>
+            <span class="contact-arrow" aria-hidden="true">→</span>
+          </a>
+          <div class="contact-item address-item">
+            <span class="contact-icon" aria-hidden="true">⌖</span>
+            <span><small>Find us</small><strong>Near Shreenathji Park,<br />Vapi, Gujarat – 396191</strong></span>
+          </div>
+          <button class="button button-primary contact-join" type="button" data-open-auth>Join our community <span aria-hidden="true">↗</span></button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand footer-brand" href="#home">
+        <span class="brand-mark" aria-hidden="true">
+          <img class="brand-logo" src="assets/logo.webp" alt="" />
+        </span>
+        <span class="brand-copy"><strong>SLPS VAPI</strong><small>Saurashtra Leuva Patel Samaj</small></span>
+      </a>
+      <p>Rooted in heritage. Growing together.</p>
+      <span class="footer-copy">© <span id="current-year"></span> SLPS Vapi</span>
+    </footer>
+
+    <dialog class="auth-dialog" aria-labelledby="auth-title">
+      <button class="dialog-close" type="button" aria-label="Close dialog">×</button>
+      <div class="section-label"><span>SLPS VAPI</span> Member community</div>
+      <h2 id="auth-title">Welcome <em>back.</em></h2>
+      <p class="auth-description">The online member portal is coming soon. Please contact the Samaj for membership enquiries.</p>
+      <div class="auth-tabs" role="tablist" aria-label="Member options">
+        <button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-auth-mode="login">Member login</button>
+        <button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-mode="register">Register</button>
+      </div>
+      <form class="auth-form">
+        <label for="member-email">Email address</label>
+        <input id="member-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+        <div class="register-fields" hidden>
+          <label for="member-name">Full name</label>
+          <input id="member-name" name="name" type="text" placeholder="Your name" autocomplete="name" />
+        </div>
+        <button class="button button-primary auth-submit" type="submit">Contact us about membership <span aria-hidden="true">↗</span></button>
+      </form>
+      <a class="auth-email" href="mailto:slpsvapi@gmail.com?subject=SLPS%20Vapi%20membership">slpsvapi@gmail.com</a>
+    </dialog>
+    <div class="dialog-backdrop"></div>
+    <div class="sr-only" aria-live="polite" id="carousel-announcement"></div>
+  </body>
+</html>
