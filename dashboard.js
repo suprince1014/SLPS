@@ -874,18 +874,12 @@ function initAnnouncementCarousel(announcementsList) {
 
   const slides = track.querySelectorAll(".carousel-slide-item");
   const total = slides.length;
+  let isAnimating = false;
 
-  function showSlide(index) {
-    if (total === 0) return;
-    currentCarouselIndex = (index + total) % total;
+  function updateBadgeAndCounter(index) {
+    if (counter) counter.textContent = `${index + 1} / ${total}`;
 
-    slides.forEach((slide, idx) => {
-      slide.classList.toggle("is-active", idx === currentCarouselIndex);
-    });
-
-    if (counter) counter.textContent = `${currentCarouselIndex + 1} / ${total}`;
-
-    const activeSlide = slides[currentCarouselIndex];
+    const activeSlide = slides[index];
     const priority = activeSlide ? activeSlide.dataset.priority : "Normal";
     if (alertLabel && alertPill) {
       if (priority === "Urgent") {
@@ -901,20 +895,82 @@ function initAnnouncementCarousel(announcementsList) {
     }
   }
 
+  // Set initial badge and counter
+  updateBadgeAndCounter(currentCarouselIndex);
+
+  function goToSlide(targetIndex, direction = "next") {
+    if (total <= 1 || isAnimating) return;
+    const normalizedTarget = (targetIndex + total) % total;
+    if (normalizedTarget === currentCarouselIndex) return;
+
+    const prevIndex = currentCarouselIndex;
+    currentCarouselIndex = normalizedTarget;
+
+    const currentSlide = slides[prevIndex];
+    const nextSlide = slides[currentCarouselIndex];
+
+    isAnimating = true;
+
+    // Reset classes and position incoming slide at the starting boundary without transition
+    nextSlide.classList.remove("slide-out-left", "slide-out-right", "is-active");
+    if (direction === "next") {
+      nextSlide.classList.add("prepare-from-right");
+    } else {
+      nextSlide.classList.add("prepare-from-left");
+    }
+
+    // Force browser repaint to anchor initial position
+    void nextSlide.offsetWidth;
+
+    // Remove prepare class so smooth CSS transition activates
+    nextSlide.classList.remove("prepare-from-right", "prepare-from-left");
+
+    // Animate current slide out
+    currentSlide.classList.remove("is-active");
+    if (direction === "next") {
+      currentSlide.classList.add("slide-out-left");
+    } else {
+      currentSlide.classList.add("slide-out-right");
+    }
+
+    // Animate next slide in from right to center
+    nextSlide.classList.add("is-active");
+
+    updateBadgeAndCounter(currentCarouselIndex);
+
+    setTimeout(() => {
+      currentSlide.classList.remove("slide-out-left", "slide-out-right");
+      isAnimating = false;
+    }, 680);
+  }
+
   function nextSlide() {
-    showSlide(currentCarouselIndex + 1);
+    goToSlide(currentCarouselIndex + 1, "next");
   }
 
   function prevSlide() {
-    showSlide(currentCarouselIndex - 1);
+    goToSlide(currentCarouselIndex - 1, "prev");
   }
 
-  if (nextBtn) nextBtn.onclick = () => { nextSlide(); resetTimer(); };
-  if (prevBtn) prevBtn.onclick = () => { prevSlide(); resetTimer(); };
+  if (nextBtn) {
+    nextBtn.onclick = (e) => {
+      e.stopPropagation();
+      nextSlide();
+      resetTimer();
+    };
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = (e) => {
+      e.stopPropagation();
+      prevSlide();
+      resetTimer();
+    };
+  }
 
   function resetTimer() {
     clearInterval(carouselTimer);
-    carouselTimer = setInterval(nextSlide, 5500);
+    carouselTimer = setInterval(nextSlide, 4500);
   }
 
   resetTimer();

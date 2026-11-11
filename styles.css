@@ -1,5 +1,6 @@
 :root {
-  color-scheme: light;
+  color-scheme: light !important;
+  forced-color-adjust: none;
   --paper: #f8f7f2;
   --white: #fffefa;
   --ink: #26372e;
@@ -35,8 +36,24 @@ body[data-font-theme="modern"] {
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { scroll-behavior: smooth; scroll-padding-top: 92px; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.65; }
+html {
+  color-scheme: light !important;
+  forced-color-adjust: none;
+  scroll-behavior: smooth;
+  scroll-padding-top: 92px;
+  background-color: var(--paper) !important;
+  color: var(--ink) !important;
+}
+body {
+  margin: 0;
+  color-scheme: light !important;
+  forced-color-adjust: none;
+  background-color: var(--paper) !important;
+  color: var(--ink) !important;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+}
 body.dialog-open { overflow: hidden; }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; }
@@ -564,6 +581,15 @@ body.dialog-open .dialog-backdrop { display: block; }
   .profile-details { grid-template-columns: 1fr; }
   .profile-details > div:last-child { border-bottom: 0; }
 }
+/* FORCED LIGHT MODE: Ignore OS / browser dark mode */
+@media (prefers-color-scheme: dark) {
+  :root, html, body {
+    color-scheme: light !important;
+    background-color: var(--paper) !important;
+    color: var(--ink) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
   .work-card::before { animation: none; }

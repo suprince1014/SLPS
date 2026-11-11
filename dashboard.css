@@ -4,16 +4,18 @@
    ========================================================== */
 
 :root {
-  --dash-bg: #f8f7f2;
+  color-scheme: light !important;
+  forced-color-adjust: none;
+  --dash-bg: var(--paper, #f8f7f2);
   --dash-surface: #ffffff;
   --dash-surface-alt: #f4f3ec;
-  --dash-ink: #26372e;
-  --dash-muted: #6f786f;
-  --dash-line: #e2e4dc;
-  --dash-green: #526e59;
-  --dash-green-dark: #354d3d;
+  --dash-ink: var(--ink, #1e2620);
+  --dash-muted: var(--muted, #647067);
+  --dash-line: var(--line, #dedfd6);
+  --dash-green: var(--green, #285434);
+  --dash-green-dark: var(--green-dark, #1b3a24);
   --dash-green-light: #eef2ed;
-  --dash-terracotta: #bd7658;
+  --dash-terracotta: var(--terracotta, #bd7658);
   --dash-terracotta-light: #fbf0ea;
   --dash-gold: #c9933e;
   --dash-gold-light: #fdf8ed;
@@ -21,6 +23,8 @@
   --dash-blue-light: #edf4fe;
   --dash-danger: #c0392b;
   --dash-danger-light: #fdf0ee;
+  --dash-serif: var(--serif, "Playfair Display", Georgia, serif);
+  --dash-sans: var(--sans, "DM Sans", "Segoe UI", sans-serif);
   --dash-sidebar-width: 270px;
   --dash-topbar-height: 42px;
   --dash-bottomnav-height: 60px;
@@ -36,15 +40,53 @@
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: light !important;
+  forced-color-adjust: none;
+}
+
 body.dashboard-page {
-  background: var(--dash-bg);
+  color-scheme: light !important;
+  forced-color-adjust: none;
+  background-color: var(--dash-bg) !important;
   min-height: 100vh;
   margin: 0;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  font-family: var(--sans);
+  font-family: var(--dash-sans);
+  color: var(--dash-ink) !important;
+  font-size: 14.5px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings: Match website's serif Playfair Display typography */
+h1, h2 {
+  font-family: var(--dash-serif);
+  font-weight: 500;
+  letter-spacing: -0.035em;
   color: var(--dash-ink);
+}
+
+h1 em, h2 em {
+  color: var(--dash-green);
+  font-weight: 500;
+}
+
+body.dashboard-page[data-font-theme="editorial"] {
+  --dash-serif: "Lora", Georgia, serif;
+  --dash-sans: "Manrope", "Segoe UI", sans-serif;
+}
+
+body.dashboard-page[data-font-theme="classic"] {
+  --dash-serif: "Cormorant Garamond", Georgia, serif;
+  --dash-sans: "Montserrat", "Segoe UI", sans-serif;
+}
+
+body.dashboard-page[data-font-theme="modern"] {
+  --dash-serif: "Merriweather", Georgia, serif;
+  --dash-sans: "Nunito Sans", "Segoe UI", sans-serif;
 }
 
 /* ==========================================================
@@ -113,9 +155,12 @@ body.dashboard-page {
 
 .carousel-slider-track {
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   position: relative;
-  height: 24px;
+  height: 26px;
+  display: flex;
+  align-items: center;
 }
 
 .carousel-slide-item {
@@ -123,17 +168,48 @@ body.dashboard-page {
   align-items: center;
   gap: 12px;
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(12px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateX(100%);
+  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease;
+  will-change: transform, opacity;
 }
 
 .carousel-slide-item.is-active {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
+  transform: translateX(0);
+  z-index: 2;
+}
+
+.carousel-slide-item.slide-out-left {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-100%);
+  z-index: 1;
+}
+
+.carousel-slide-item.slide-out-right {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(100%);
+  z-index: 1;
+}
+
+.carousel-slide-item.prepare-from-right {
+  transition: none !important;
+  transform: translateX(100%) !important;
+  opacity: 0 !important;
+}
+
+.carousel-slide-item.prepare-from-left {
+  transition: none !important;
+  transform: translateX(-100%) !important;
+  opacity: 0 !important;
 }
 
 .slide-content-text {
@@ -276,20 +352,23 @@ body.dashboard-page {
 .sidebar-brand-copy {
   display: flex;
   flex-direction: column;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .sidebar-brand-copy strong {
-  font-size: 14px;
-  letter-spacing: 0.12em;
+  font-family: var(--dash-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
   color: var(--dash-ink);
 }
 
 .sidebar-brand-copy small {
+  font-family: var(--dash-sans);
   color: var(--dash-muted);
-  font-size: 9.5px;
-  letter-spacing: 0.02em;
-  margin-top: 2px;
+  font-size: 9px;
+  letter-spacing: 0.035em;
+  margin-top: 3px;
 }
 
 /* Sidebar Member Mini Card */
@@ -348,7 +427,7 @@ body.dashboard-page {
 
 .sidebar-user-id {
   font-size: 10px;
-  font-family: ui-monospace, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   color: var(--dash-muted);
   font-weight: 600;
 }
@@ -364,11 +443,12 @@ body.dashboard-page {
 
 .sidebar-group-title {
   padding: 8px 12px 4px;
+  font-family: var(--dash-sans);
   font-size: 10px;
-  font-weight: 800;
-  color: var(--dash-muted);
+  font-weight: 700;
+  color: var(--dash-green);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
 }
 
 .dash-nav-tab {
@@ -893,17 +973,22 @@ body.dashboard-page {
 }
 
 .dash-welcome-copy h1 {
-  font-size: clamp(24px, 2.8vw, 34px);
+  font-family: var(--dash-serif);
+  font-size: clamp(26px, 3.2vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
   margin: 6px 0 8px;
   color: var(--dash-ink);
 }
 
 .dash-welcome-copy p {
   color: var(--dash-muted);
+  font-family: var(--dash-sans);
   font-size: 13.5px;
   max-width: 560px;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.75;
 }
 
 .dash-welcome-actions {
@@ -968,17 +1053,19 @@ body.dashboard-page {
 }
 
 .kpi-label {
-  font-size: 11px;
+  font-family: var(--dash-sans);
+  font-size: 10px;
   color: var(--dash-muted);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   margin-bottom: 4px;
 }
 
 .kpi-number {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--dash-ink);
   line-height: 1.1;
   margin-bottom: 4px;
@@ -998,14 +1085,37 @@ body.dashboard-page {
   margin: 0 0 16px;
 }
 
-.section-subhead h2,
-.section-subhead h3 {
-  font-size: 18px;
+.section-subhead h2 {
+  font-family: var(--dash-serif);
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
   margin: 0;
   color: var(--dash-ink);
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.section-subhead h3 {
+  font-family: var(--dash-serif);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--dash-ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-subhead p {
+  font-family: var(--dash-sans);
+  font-size: 13px;
+  color: var(--dash-muted);
+  line-height: 1.6;
+  margin: 0;
 }
 
 .dash-quick-cards-grid {
@@ -1110,7 +1220,10 @@ body.dashboard-page {
 
 .dash-card-header h3 {
   margin: 0;
-  font-size: 16px;
+  font-family: var(--dash-serif);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
   color: var(--dash-ink);
   display: flex;
   align-items: center;
@@ -1262,7 +1375,11 @@ body.dashboard-page {
 
 .profile-sidebar-card h3 {
   margin: 0 0 4px;
-  font-size: 17px;
+  font-family: var(--dash-serif);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--dash-ink);
 }
 
 .profile-sidebar-role {
@@ -1530,7 +1647,11 @@ body.dashboard-page {
 
 .business-card h4 {
   margin: 0 0 2px;
-  font-size: 15px;
+  font-family: var(--dash-sans);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--dash-ink);
 }
 
 .business-category-tag {
@@ -1538,7 +1659,7 @@ body.dashboard-page {
   font-weight: 700;
   color: var(--dash-terracotta);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.12em;
 }
 
 .own-business-pill {
@@ -1636,6 +1757,25 @@ body.dashboard-page {
   transform: translateY(-2px);
   border-color: var(--dash-green);
   box-shadow: var(--dash-shadow-md);
+}
+
+.committee-card h4 {
+  margin: 0 0 2px;
+  font-family: var(--dash-serif);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--dash-ink);
+}
+
+.job-card h4,
+.matrimonial-card h4 {
+  margin: 0 0 2px;
+  font-family: var(--dash-sans);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--dash-ink);
 }
 
 .skill-tag-pills {
@@ -1787,7 +1927,11 @@ body.dashboard-page {
 
 .announcement-card h4 {
   margin: 0 0 8px;
-  font-size: 16.5px;
+  font-family: var(--dash-serif);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--dash-ink);
 }
 
 .announcement-desc {
@@ -1874,7 +2018,11 @@ body.dashboard-page {
 
 .dash-modal-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-family: var(--dash-serif);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--dash-ink);
 }
 
 .dash-modal-actions {
@@ -2256,7 +2404,9 @@ body.dashboard-page {
   }
 
   .section-subhead > div h2 {
-    font-size: 19px !important;
+    font-family: var(--dash-serif);
+    font-size: 21px !important;
+    letter-spacing: -0.03em;
   }
 
   .section-subhead > div p {
@@ -2280,7 +2430,9 @@ body.dashboard-page {
   }
 
   .dash-welcome-copy h1 {
-    font-size: 20px;
+    font-family: var(--dash-serif);
+    font-size: 22px;
+    letter-spacing: -0.035em;
   }
 
   .dash-welcome-copy p {
@@ -2434,7 +2586,9 @@ body.dashboard-page {
   }
 
   .dash-modal-header h3 {
-    font-size: 16.5px;
+    font-family: var(--dash-serif);
+    font-size: 18px;
+    letter-spacing: -0.025em;
   }
 
   .dash-modal-actions {
@@ -2513,5 +2667,74 @@ body.dashboard-page {
   .role-badge-pill {
     padding: 2px 7px;
     font-size: 10px;
+  }
+}
+
+/* ==========================================================
+   FORCED LIGHT / WHITE THEME: OVERRIDE SYSTEM / BROWSER DARK MODE
+   ========================================================== */
+@media (prefers-color-scheme: dark) {
+  :root,
+  html,
+  body {
+    color-scheme: light !important;
+  }
+
+  body.dashboard-page {
+    background-color: var(--dash-bg, #f8f7f2) !important;
+    color: var(--dash-ink, #1e2620) !important;
+  }
+
+  /* Force white / light background on all cards and containers */
+  .dash-surface,
+  .dash-card,
+  .kpi-card,
+  .quick-card,
+  .family-card,
+  .business-card,
+  .job-card,
+  .matrimonial-card,
+  .committee-card,
+  .announcement-card,
+  .dash-sidebar,
+  .dashboard-header,
+  .mobile-bottom-nav,
+  .dash-modal,
+  .directory-table-wrap,
+  .directory-table,
+  .qr-card-box {
+    color-scheme: light !important;
+    background-color: #ffffff !important;
+    color: var(--dash-ink, #1e2620) !important;
+  }
+
+  .dash-welcome-banner {
+    background: linear-gradient(135deg, #ffffff 0%, #f6f8f5 100%) !important;
+  }
+
+  .top-announcements-bar {
+    background: #fbf2ee !important;
+    color: var(--dash-ink, #1e2620) !important;
+  }
+
+  /* Force inputs and controls to retain light styling */
+  input,
+  select,
+  textarea,
+  button {
+    color-scheme: light !important;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="search"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    background-color: #ffffff !important;
+    color: var(--dash-ink, #1e2620) !important;
   }
 }
