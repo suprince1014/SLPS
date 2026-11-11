@@ -34,12 +34,18 @@ const slides = [
 ];
 
 const hero = document.querySelector(".hero");
+const heroCopy = document.querySelector(".hero-copy");
+const heroBackgroundLayers = Array.from(document.querySelectorAll(".hero-background-layer"));
 const title = document.querySelector("#hero-title");
 const description = document.querySelector("#hero-description");
 const dots = Array.from(document.querySelectorAll(".carousel-dot"));
 const announcement = document.querySelector("#carousel-announcement");
 const heroImages = slides.map((_, index) => `assets/hero-${String(index + 1).padStart(2, "0")}.webp`);
 let activeSlide = 0;
+let currentBackgroundLayer = 0;
+let currentBackgroundIndex = -1;
+let pendingBackgroundIndex = null;
+let isBackgroundTransitioning = false;
 
 heroImages.forEach((source) => {
   const image = new Image();
@@ -48,7 +54,28 @@ heroImages.forEach((source) => {
 
 function showSlide(index) {
   activeSlide = (index + slides.length) % slides.length;
-  hero.style.setProperty("--hero-image", `url("${heroImages[activeSlide]}")`);
+  const requestedBackgroundIndex = activeSlide;
+  const backgroundImage = `url("${heroImages[requestedBackgroundIndex]}")`;
+  if (currentBackgroundIndex === -1) {
+    const currentLayer = heroBackgroundLayers[currentBackgroundLayer];
+    currentLayer.style.backgroundImage = backgroundImage;
+    currentLayer.dataset.slideIndex = String(requestedBackgroundIndex);
+    currentLayer.classList.add("is-visible");
+    currentBackgroundIndex = requestedBackgroundIndex;
+  } else if (isBackgroundTransitioning) {
+    pendingBackgroundIndex = requestedBackgroundIndex;
+  } else if (requestedBackgroundIndex !== currentBackgroundIndex) {
+    const incomingLayerIndex = 1 - currentBackgroundLayer;
+    const incomingLayer = heroBackgroundLayers[incomingLayerIndex];
+    incomingLayer.style.backgroundImage = backgroundImage;
+    incomingLayer.dataset.slideIndex = String(requestedBackgroundIndex);
+    isBackgroundTransitioning = true;
+    window.requestAnimationFrame(() => incomingLayer.classList.add("is-visible"));
+  }
+
+  heroCopy.classList.remove("is-changing");
+  void heroCopy.offsetWidth;
+  heroCopy.classList.add("is-changing");
   title.innerHTML = slides[activeSlide].title;
   description.textContent = slides[activeSlide].description;
   dots.forEach((dot, dotIndex) => {
@@ -62,6 +89,22 @@ function showSlide(index) {
   });
   announcement.textContent = `Slide ${activeSlide + 1} of ${slides.length}`;
 }
+
+heroBackgroundLayers.forEach((layer, layerIndex) => {
+  layer.addEventListener("transitionend", (event) => {
+    if (!isBackgroundTransitioning || event.propertyName !== "opacity" || !layer.classList.contains("is-visible")) return;
+    heroBackgroundLayers[currentBackgroundLayer].classList.remove("is-visible");
+    currentBackgroundLayer = layerIndex;
+    currentBackgroundIndex = Number(layer.dataset.slideIndex);
+    isBackgroundTransitioning = false;
+
+    if (pendingBackgroundIndex !== null) {
+      const nextBackgroundIndex = pendingBackgroundIndex;
+      pendingBackgroundIndex = null;
+      if (nextBackgroundIndex !== currentBackgroundIndex) showSlide(nextBackgroundIndex);
+    }
+  });
+});
 
 showSlide(0);
 document.querySelector("#slide-prev").addEventListener("click", () => showSlide(activeSlide - 1));
@@ -96,30 +139,6 @@ menuToggle.addEventListener("click", () => {
 primaryNav.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
 
 const authDialog = document.querySelector(".auth-dialog");
-const authTabs = Array.from(document.querySelectorAll(".auth-tab"));
-const authTitle = document.querySelector("#auth-title");
-const authDescription = document.querySelector(".auth-description");
-const authSubmit = document.querySelector(".auth-submit");
-const registerFields = document.querySelector(".register-fields");
-const memberName = document.querySelector("#member-name");
-
-function setAuthMode(mode) {
-  const isRegister = mode === "register";
-  authTitle.innerHTML = isRegister ? "Join our <em>community.</em>" : "Welcome <em>back.</em>";
-  authDescription.textContent = isRegister
-    ? "The online member portal is coming soon. Contact us and our team will be happy to help you get started."
-    : "The online member portal is coming soon. Please contact the Samaj for membership enquiries.";
-  authSubmit.innerHTML = isRegister
-    ? 'Ask about registration <span aria-hidden="true">↗</span>'
-    : 'Contact us about membership <span aria-hidden="true">↗</span>';
-  registerFields.hidden = !isRegister;
-  memberName.required = isRegister;
-  authTabs.forEach((tab) => {
-    const active = tab.dataset.authMode === mode;
-    tab.classList.toggle("is-active", active);
-    tab.setAttribute("aria-selected", String(active));
-  });
-}
 
 document.querySelectorAll("[data-open-auth]").forEach((button) => {
   button.addEventListener("click", () => {
@@ -128,14 +147,9 @@ document.querySelectorAll("[data-open-auth]").forEach((button) => {
     document.body.classList.add("dialog-open");
   });
 });
-authTabs.forEach((tab) => tab.addEventListener("click", () => setAuthMode(tab.dataset.authMode)));
 document.querySelector(".dialog-close").addEventListener("click", () => authDialog.close());
 authDialog.addEventListener("click", (event) => {
   if (event.target === authDialog) authDialog.close();
 });
 authDialog.addEventListener("close", () => document.body.classList.remove("dialog-open"));
-document.querySelector(".auth-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  window.location.href = "mailto:slpsvapi@gmail.com?subject=SLPS%20Vapi%20membership";
-});
 document.querySelector("#current-year").textContent = String(new Date().getFullYear());

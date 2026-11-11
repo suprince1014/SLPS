@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Your SLPS Vapi member dashboard." />
+    <meta name="theme-color" content="#f8f7f2" />
+    <title>Member dashboard | SLPS Vapi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="dashboard.js"></script>
+  </head>
+  <body class="dashboard-page">
+    <header class="site-header dashboard-header">
+      <a class="brand" href="index.html" aria-label="SLPS Vapi home">
+        <span class="brand-mark" aria-hidden="true">
+          <img class="brand-logo" src="assets/logo.webp" alt="" />
+        </span>
+        <span class="brand-copy"><strong>SLPS VAPI</strong><small>Saurashtra Leuva Patel Samaj</small></span>
+      </a>
+      <button class="button button-small button-outline" id="sign-out" type="button" hidden>Sign out</button>
+    </header>
+
+    <main class="dashboard-main section-wrap" id="dashboard-main" hidden>
+      <div class="section-label"><span>MEMBER AREA</span> SLPS Vapi</div>
+      <h1>Welcome, <em id="member-display-name">member.</em></h1>
+      <p class="dashboard-intro">Your member account is verified and ready.</p>
+      <section class="dashboard-card" aria-labelledby="profile-title">
+        <div class="dashboard-card-heading">
+          <div>
+            <div class="section-label"><span>ACCOUNT</span> Your details</div>
+            <h2 id="profile-title">Member profile</h2>
+          </div>
+          <span class="verified-badge"><span aria-hidden="true">✓</span> Verified</span>
+        </div>
+        <dl class="profile-details">
+          <div><dt>Full name</dt><dd id="profile-name">—</dd></div>
+          <div><dt>Mobile number</dt><dd id="profile-phone">—</dd></div>
+          <div><dt>Email address</dt><dd id="profile-email">—</dd></div>
+          <div><dt>Date of birth</dt><dd id="profile-dob">—</dd></div>
+          <div><dt>Gender</dt><dd id="profile-gender">—</dd></div>
+        </dl>
+      </section>
+      <a class="inline-link dashboard-home-link" href="index.html">Back to SLPS Vapi <span aria-hidden="true">↗</span></a>
+    </main>
+    <main class="dashboard-loading section-wrap" id="dashboard-loading" role="status">
+      <p>Loading your member account…</p>
+    </main>
+    <p class="dashboard-error" id="dashboard-error" role="alert" hidden></p>
+
+    <footer class="site-footer">
+      <div class="footer-inner section-wrap">
+        <a class="brand footer-brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true">
+            <img class="brand-logo" src="assets/logo.webp" alt="" />
+          </span>
+          <span class="brand-copy"><strong>SLPS VAPI</strong><small>Saurashtra Leuva Patel Samaj</small></span>
+        </a>
+        <p class="footer-tagline">Rooted in heritage. Growing together.</p>
+        <div class="footer-meta">
+          <a class="footer-policy" href="privacy-policy.html">Terms &amp; Policies</a>
+          <span class="footer-copy">© <span id="current-year"></span> SLPS Vapi</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
