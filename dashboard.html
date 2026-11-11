@@ -17,1147 +17,1228 @@
     <script type="module" src="dashboard.js"></script>
   </head>
   <body class="dashboard-page">
-    <!-- Top Bar Navigation Header -->
-    <header class="site-header dashboard-header">
-      <a class="brand" href="index.html" aria-label="SLPS Vapi home">
-        <span class="brand-mark" aria-hidden="true">
-          <img class="brand-logo" src="assets/logo.webp" alt="SLPS Logo" />
-        </span>
-        <span class="brand-copy">
-          <strong>SLPS VAPI</strong>
-          <small>Saurashtra Leuva Patel Samaj</small>
-        </span>
-      </a>
-
-      <!-- Global Search Bar -->
-      <div class="dash-header-center">
-        <div class="dash-search-box">
-          <span class="dash-search-icon" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
+    <!-- ==========================================================
+         1. TOP ANNOUNCEMENT CAROUSEL (RUNNING ABOVE THE NAVBAR)
+         ========================================================== -->
+    <aside class="top-announcements-bar" id="top-announcements-bar" aria-label="Community Alert Marquee">
+      <div class="carousel-bar-inner">
+        <div class="carousel-badge-wrap">
+          <span class="top-alert-pill" id="top-alert-pill">
+            <span class="top-alert-pulse" aria-hidden="true"></span>
+            <span id="top-alert-label">Urgent Alert</span>
           </span>
-          <input
-            type="search"
-            class="dash-search-input"
-            id="global-search-input"
-            placeholder="Search members, businesses, jobs, notices…"
-            aria-label="Global Community Search"
-            autocomplete="off"
-          />
         </div>
-        <!-- Global Search Results Dropdown -->
-        <div class="dash-search-results" id="global-search-results" hidden></div>
+
+        <!-- Sliding Track containing cycling announcements -->
+        <div class="carousel-slider-track" id="carousel-slider-track">
+          <div class="carousel-slide-item is-active" data-index="0" data-jump-tab="announcements">
+            <span class="slide-content-text">
+              🚨 Urgent: Blood Requirement for O- and B+ Emergency Circle at Haria L.G. Rotary Hospital, Vapi.
+            </span>
+            <span class="slide-action-link">View Notice &amp; Contacts →</span>
+          </div>
+          <div class="carousel-slide-item" data-index="1" data-jump-tab="overview">
+            <span class="slide-content-text">
+              ✨ SLPS Annual Sneha Milan &amp; Cultural Night 2026 - Registration Open for 28th Nov.
+            </span>
+            <span class="slide-action-link">RSVP Pass →</span>
+          </div>
+          <div class="carousel-slide-item" data-index="2" data-jump-tab="announcements">
+            <span class="slide-content-text">
+              🎓 Higher Education Merit Scholarships 2026-27 Applications Invited - Apply by Dec 15.
+            </span>
+            <span class="slide-action-link">Apply Now →</span>
+          </div>
+          <div class="carousel-slide-item" data-index="3" data-jump-tab="announcements">
+            <span class="slide-content-text">
+              🏛️ Newly Renovated AC Main Banquet Hall Available for Booking at Subsidized Member Tariff.
+            </span>
+            <span class="slide-action-link">Tariff Details →</span>
+          </div>
+        </div>
+
+        <!-- Carousel Manual Controls -->
+        <div class="carousel-controls">
+          <button class="carousel-arrow-btn" id="carousel-prev-btn" type="button" aria-label="Previous alert">‹</button>
+          <span class="carousel-counter-label" id="carousel-counter">1 / 4</span>
+          <button class="carousel-arrow-btn" id="carousel-next-btn" type="button" aria-label="Next alert">›</button>
+        </div>
       </div>
+    </aside>
 
-      <!-- Header Actions (Role Switcher, Notifications, User Chip, Sign Out) -->
-      <div class="dash-header-right">
-        <!-- Role-Based Access Control Switcher (Section 13) -->
-        <div class="role-switcher-wrap" title="Switch your active role to test member, admin, or committee permissions">
-          <span class="role-switcher-label">Role:</span>
-          <select id="role-switcher" class="role-select" aria-label="Active Role Selection">
-            <option value="member" selected>Member</option>
-            <option value="admin">Administrator</option>
-            <option value="committee">Committee Member</option>
-            <option value="trustee">Trustee</option>
-          </select>
+    <!-- ==========================================================
+         2. APP SHELL LAYOUT: LEFT SIDEBAR + MAIN CONTENT AREA
+         ========================================================== -->
+    <div class="dashboard-app-layout">
+      <!-- Mobile Backdrop Overlay -->
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- LEFT SIDEBAR -->
+      <aside class="dash-sidebar" id="dash-sidebar" aria-label="Main Navigation">
+        <!-- Sidebar Brand Header -->
+        <div class="sidebar-header">
+          <div class="sidebar-brand-mark">
+            <img class="brand-logo" src="assets/logo.webp" alt="SLPS Logo" />
+          </div>
+          <div class="sidebar-brand-copy">
+            <strong>SLPS VAPI</strong>
+            <small>Saurashtra Leuva Patel Samaj</small>
+          </div>
+          <button class="sidebar-close-btn" id="sidebar-close-btn" type="button" aria-label="Close navigation drawer">✕</button>
         </div>
 
-        <!-- Notification Center -->
-        <div class="notification-btn-wrap">
-          <button class="notification-bell-btn" id="notif-toggle-btn" type="button" aria-label="Notifications" title="View community alerts and notices">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            <span class="notification-badge" id="notif-count">4</span>
+        <!-- Sidebar Member Quick Profile Card -->
+        <div class="sidebar-user-card" id="sidebar-user-card" data-jump-tab="profile" title="View & edit your profile">
+          <div class="sidebar-avatar" id="sidebar-avatar">SK</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name" id="sidebar-user-name">Suprince Kakadiya</span>
+            <span class="sidebar-user-id" id="sidebar-user-id">SLPS-2026-1001</span>
+          </div>
+        </div>
+
+        <!-- Left Navigation Links (All Modules from information.md) -->
+        <nav class="sidebar-nav-group" id="module-tabs-list" role="tablist">
+          <div class="sidebar-group-title">Main Portal</div>
+          <button class="dash-nav-tab is-active" role="tab" aria-selected="true" data-tab="overview">
+            <span class="dash-nav-tab-icon">📊</span>
+            <span class="dash-nav-tab-text">Overview</span>
           </button>
-          <!-- Notification Dropdown Panel -->
-          <div class="notification-dropdown" id="notif-dropdown" hidden>
-            <div class="notification-header">
-              <h4>Community Notifications</h4>
-              <button class="text-button" id="mark-all-read-btn" type="button" style="font-size:11px; padding:0; color:var(--dash-green-dark);">Mark all read</button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="profile">
+            <span class="dash-nav-tab-icon">👤</span>
+            <span class="dash-nav-tab-text">My Profile</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="family">
+            <span class="dash-nav-tab-icon">👨‍👩‍👧‍👦</span>
+            <span class="dash-nav-tab-text">Family Members</span>
+            <span class="dash-nav-counter" id="tab-family-count">3</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="business">
+            <span class="dash-nav-tab-icon">🏢</span>
+            <span class="dash-nav-tab-text">Business Directory</span>
+            <span class="dash-nav-counter" id="tab-business-count">6</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="job">
+            <span class="dash-nav-tab-icon">💼</span>
+            <span class="dash-nav-tab-text">Job Portal</span>
+            <span class="dash-nav-counter" id="tab-job-count">4</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="matrimonial">
+            <span class="dash-nav-tab-icon">💍</span>
+            <span class="dash-nav-tab-text">Matrimonial</span>
+            <span class="dash-nav-counter" id="tab-matrimonial-count">4</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="directory">
+            <span class="dash-nav-tab-icon">👥</span>
+            <span class="dash-nav-tab-text">Member Directory</span>
+            <span class="dash-nav-counter" id="tab-members-count">12</span>
+          </button>
+
+          <div class="sidebar-group-title" style="margin-top:14px;">Samaj Leadership &amp; Media</div>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="committee">
+            <span class="dash-nav-tab-icon">🏛️</span>
+            <span class="dash-nav-tab-text">Committee Members</span>
+            <span class="dash-nav-counter" id="tab-committee-count">8</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="trustees">
+            <span class="dash-nav-tab-icon">📜</span>
+            <span class="dash-nav-tab-text">Board of Trustees</span>
+            <span class="dash-nav-counter" id="tab-trustees-count">5</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="announcements">
+            <span class="dash-nav-tab-icon">📢</span>
+            <span class="dash-nav-tab-text">Announcements</span>
+            <span class="dash-nav-counter" id="tab-announcements-count">4</span>
+          </button>
+          <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="idcard">
+            <span class="dash-nav-tab-icon">🪪</span>
+            <span class="dash-nav-tab-text">Samaj ID &amp; QR Pass</span>
+          </button>
+        </nav>
+
+        <!-- Sidebar Footer Quick Sign Out -->
+        <div class="sidebar-footer">
+          <button class="sidebar-sign-out-btn" id="sidebar-sign-out-btn" type="button">
+            <span>🚪</span> Sign Out Account
+          </button>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN CONTENT AREA -->
+      <div class="dash-content-area">
+        <!-- Top App Bar Navigation Header -->
+        <header class="dashboard-header">
+          <!-- Mobile Sidebar Toggle & Brand -->
+          <div class="mobile-header-left">
+            <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle" type="button" aria-label="Toggle navigation menu">
+              ☰
+            </button>
+            <div class="mobile-header-brand" id="mobile-header-brand" data-jump-tab="overview" title="Go to Overview">
+              <img class="mobile-header-logo" src="assets/logo.webp" alt="SLPS Logo" />
+              <span class="mobile-header-title">SLPS Vapi</span>
             </div>
-            <div class="notification-list" id="notification-items-wrap"></div>
+          </div>
+
+          <!-- Global Instant Search Input -->
+          <div class="dash-header-center">
+            <div class="dash-search-box">
+              <span class="dash-search-icon" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
+              <input
+                type="search"
+                class="dash-search-input"
+                id="global-search-input"
+                placeholder="Search members, businesses, jobs, notices…"
+                aria-label="Global Community Search"
+                autocomplete="off"
+              />
+            </div>
+            <!-- Global Search Results Dropdown -->
+            <div class="dash-search-results" id="global-search-results" hidden></div>
+          </div>
+
+          <!-- Header Right Actions -->
+          <div class="dash-header-right">
+            <!-- READ-ONLY ROLE BADGE (Managed by Admin - User only views their assigned role) -->
+            <div class="role-badge-pill" id="user-role-display" title="Your verified Samaj account status">
+              <span class="role-badge-label">Role:</span>
+              <strong class="role-badge-value" id="current-role-name">Member</strong>
+            </div>
+
+            <!-- Notification Center Bell -->
+            <div class="notification-btn-wrap">
+              <button class="notification-bell-btn" id="notif-toggle-btn" type="button" aria-label="Notifications" title="View community alerts and notices">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="notification-badge" id="notif-count">4</span>
+              </button>
+              <!-- Notification Dropdown Panel -->
+              <div class="notification-dropdown" id="notif-dropdown" hidden>
+                <div class="notification-header">
+                  <h4>Community Notifications</h4>
+                  <button class="text-button" id="mark-all-read-btn" type="button" style="font-size:11px; padding:0; color:var(--dash-green-dark);">Mark all read</button>
+                </div>
+                <div class="notification-list" id="notification-items-wrap"></div>
+              </div>
+            </div>
+
+            <!-- User Menu Pill -->
+            <div class="user-menu-pill" id="header-user-badge" data-jump-tab="profile" title="View profile options">
+              <div class="user-avatar-sm" id="header-avatar">SK</div>
+              <div class="user-name-box">
+                <span class="user-name-title" id="header-user-name">Suprince Kakadiya</span>
+                <span class="user-member-id-tag" id="header-user-id">SLPS-2026-1001</span>
+              </div>
+            </div>
+
+            <!-- Sign Out Button (Clicking directly signs out & redirects to website login) -->
+            <button class="button button-small button-outline" id="sign-out" type="button" title="Sign out and return to website">
+              Sign out
+            </button>
+          </div>
+        </header>
+
+        <!-- Admin Active Privileges Banner (Shown only if role is Administrator) -->
+        <div class="admin-mode-banner" id="admin-mode-banner" hidden>
+          <div class="admin-banner-text">
+            <span class="admin-badge-pill">Admin Mode Active</span>
+            <span>You have full administrative privileges to manage all members, approve businesses, and publish announcements.</span>
+          </div>
+          <div class="admin-banner-actions">
+            <button class="button button-small button-primary" id="admin-add-announcement-btn" type="button" style="min-height:30px; padding:0 12px; font-size:11px;">
+              + Post Announcement
+            </button>
+            <button class="button button-small button-outline" id="admin-add-member-btn" type="button" style="min-height:30px; padding:0 12px; font-size:11px; color:#fff; border-color:rgba(255,255,255,0.4);">
+              + Add Member Record
+            </button>
           </div>
         </div>
 
-        <!-- User Profile Pill -->
-        <div class="user-menu-pill" id="header-user-badge" title="View profile options">
-          <div class="user-avatar-sm" id="header-avatar">SK</div>
-          <div class="user-name-box">
-            <span class="user-name-title" id="header-user-name">Suprince Kakadiya</span>
-            <span class="user-member-id-tag" id="header-user-id">SLPS-2026-1001</span>
-          </div>
-        </div>
+        <!-- Main Content Area with Dynamic Module Tab Panes -->
+        <main class="dash-main-container" id="dashboard-main" hidden>
+          <!-- ==========================================================
+               TAB PANE 1: DASHBOARD OVERVIEW (Section 11)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-overview" role="tabpanel" aria-labelledby="tab-overview">
+            <!-- Hero Welcome Banner -->
+            <div class="dash-welcome-banner">
+              <div class="dash-welcome-copy">
+                <div class="eyebrow"><span></span> SLPS Vapi Member Management Portal</div>
+                <h1>
+                  Namaste, <em id="member-display-name">Suprince.</em>
+                </h1>
+                <p>
+                  Your Samaj digital membership is <strong class="text-success">active &amp; verified</strong>. Manage your family records, explore community businesses, register for employment, and stay updated with official Samaj announcements.
+                </p>
+              </div>
+              <div class="dash-welcome-actions">
+                <span class="status-badge-verified">
+                  <span class="verified-dot"></span> Verified Life Member
+                </span>
+                <div style="display:flex; gap:8px;">
+                  <button class="button button-small button-primary" id="quick-print-card-btn" type="button">
+                    🖨️ Print Samaj ID Pass
+                  </button>
+                  <button class="button button-small button-outline" id="quick-view-qr-btn" type="button">
+                    📱 My Official QR
+                  </button>
+                </div>
+              </div>
+            </div>
 
-        <!-- Website & Sign out -->
-        <a class="button button-small button-outline dash-home-btn" href="index.html" title="Public Samaj Website">
-          Website <span aria-hidden="true">↗</span>
-        </a>
-        <button class="button button-small button-outline" id="sign-out" type="button">
-          Sign out
-        </button>
-      </div>
-    </header>
+            <!-- KPI Metrics Grid (Section 11.3) -->
+            <div class="dash-kpi-grid">
+              <div class="kpi-card" data-jump-tab="directory">
+                <div class="kpi-icon-wrap">👥</div>
+                <span class="kpi-label">Community Members</span>
+                <strong class="kpi-number" id="kpi-members-count">12</strong>
+                <span class="kpi-sub">Verified &amp; Registered</span>
+              </div>
 
-    <!-- Admin Active Privileges Banner (Shown when role is Admin) -->
-    <div class="admin-mode-banner" id="admin-mode-banner" hidden>
-      <div class="admin-banner-text">
-        <span class="admin-badge-pill">Admin Mode Active</span>
-        <span>You have full administrative privileges to manage all members, approve businesses, and publish announcements.</span>
-      </div>
-      <div class="admin-banner-actions">
-        <button class="button button-small button-primary" id="admin-add-announcement-btn" type="button" style="min-height:30px; padding:0 12px; font-size:11px;">
-          + Post Announcement
-        </button>
-        <button class="button button-small button-outline" id="admin-add-member-btn" type="button" style="min-height:30px; padding:0 12px; font-size:11px; color:#fff; border-color:rgba(255,255,255,0.4);">
-          + Add Member Record
-        </button>
+              <div class="kpi-card" data-jump-tab="family">
+                <div class="kpi-icon-wrap">👨‍👩‍👧‍👦</div>
+                <span class="kpi-label">My Family Members</span>
+                <strong class="kpi-number" id="kpi-family-count">3</strong>
+                <span class="kpi-sub">Registered Under Account</span>
+              </div>
+
+              <div class="kpi-card" data-jump-tab="business">
+                <div class="kpi-icon-wrap">🏢</div>
+                <span class="kpi-label">Active Businesses</span>
+                <strong class="kpi-number" id="kpi-business-count">6</strong>
+                <span class="kpi-sub">Directory Listings</span>
+              </div>
+
+              <div class="kpi-card" data-jump-tab="job">
+                <div class="kpi-icon-wrap">💼</div>
+                <span class="kpi-label">Job Seekers / Talent</span>
+                <strong class="kpi-number" id="kpi-job-count">4</strong>
+                <span class="kpi-sub">Career Network</span>
+              </div>
+
+              <div class="kpi-card" data-jump-tab="matrimonial">
+                <div class="kpi-icon-wrap">💍</div>
+                <span class="kpi-label">Matrimonial Profiles</span>
+                <strong class="kpi-number" id="kpi-matrimonial-count">4</strong>
+                <span class="kpi-sub">Verified Matchmaking</span>
+              </div>
+
+              <div class="kpi-card" data-jump-tab="directory" data-filter="blood">
+                <div class="kpi-icon-wrap">🩸</div>
+                <span class="kpi-label">Blood Donor Circle</span>
+                <strong class="kpi-number" id="kpi-blood-count">9</strong>
+                <span class="kpi-sub">Emergency Ready</span>
+              </div>
+            </div>
+
+            <!-- Quick Access Module Cards (Section 11.2) -->
+            <div class="section-subhead">
+              <h3><span>⚡</span> Quick Access Modules</h3>
+              <span style="font-size:12px; color:var(--dash-muted);">Direct shortcuts to all 9 system modules</span>
+            </div>
+            <div class="dash-quick-cards-grid">
+              <div class="quick-card" data-jump-tab="profile">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">👤</div>
+                  <span class="quick-card-badge">Module 01</span>
+                </div>
+                <h4>My Profile</h4>
+                <p>Personal information, verified contact details, permanent &amp; native Saurashtra addresses.</p>
+                <span class="quick-card-action">Manage Profile →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="family">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">👨‍👩‍👧‍👦</div>
+                  <span class="quick-card-badge">Module 02</span>
+                </div>
+                <h4>Family Members</h4>
+                <p>Register family records, relationship ties, individual digital QR identity cards.</p>
+                <span class="quick-card-action">Manage Family →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="business">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">🏢</div>
+                  <span class="quick-card-badge">Module 03</span>
+                </div>
+                <h4>Business Directory</h4>
+                <p>Promote your business, search community enterprises, connect via direct WhatsApp.</p>
+                <span class="quick-card-action">Browse Directory →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="job">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">💼</div>
+                  <span class="quick-card-badge">Module 04</span>
+                </div>
+                <h4>Job Registration</h4>
+                <p>Professional employment profile, skills showcase, resume uploads, and community recruitment.</p>
+                <span class="quick-card-action">View Jobs Portal →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="matrimonial">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">💍</div>
+                  <span class="quick-card-badge">Module 05</span>
+                </div>
+                <h4>Matrimonial Registration</h4>
+                <p>Respectful community matchmaking, partner preferences, family background &amp; verified bio-data.</p>
+                <span class="quick-card-action">Explore Matches →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="directory">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">👥</div>
+                  <span class="quick-card-badge">Module 06</span>
+                </div>
+                <h4>Member List</h4>
+                <p>Searchable community roster with filters by city, blood group, profession, and family links.</p>
+                <span class="quick-card-action">Search Directory →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="committee">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">🏛️</div>
+                  <span class="quick-card-badge">Module 07</span>
+                </div>
+                <h4>Committee Members</h4>
+                <p>Executive leaders, President, Secretary, committee designations, and official contact channels.</p>
+                <span class="quick-card-action">View Leadership →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="trustees">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">📜</div>
+                  <span class="quick-card-badge">Module 08</span>
+                </div>
+                <h4>Board of Trustees</h4>
+                <p>Distinguished patrons and trustees guiding educational, medical, and community trusts.</p>
+                <span class="quick-card-action">View Trustees →</span>
+              </div>
+
+              <div class="quick-card" data-jump-tab="announcements">
+                <div class="quick-card-top">
+                  <div class="quick-card-icon">📢</div>
+                  <span class="quick-card-badge">Module 09</span>
+                </div>
+                <h4>Announcements &amp; Events</h4>
+                <p>Official notices, circulars, upcoming Sneha Milan, youth conclaves, and RSVP registration.</p>
+                <span class="quick-card-action">View Notices →</span>
+              </div>
+            </div>
+
+            <!-- Overview Two-Column Split (ID Card & Updates) -->
+            <div class="dash-overview-columns">
+              <!-- Left Column: Digital ID Card Preview & Blood Help -->
+              <div class="dash-col-left">
+                <!-- Digital Member Identity Card -->
+                <section class="digital-id-section" aria-labelledby="id-card-heading">
+                  <div class="card-section-header">
+                    <h3 id="id-card-heading" style="font-size:16px; margin:0;">Digital Membership Pass</h3>
+                    <span class="card-pill">Official 2026</span>
+                  </div>
+
+                  <!-- The Official Holographic Card -->
+                  <div class="samaj-id-card" id="printable-samaj-card">
+                    <div class="id-card-sheen" aria-hidden="true"></div>
+                    <div class="id-card-watermark" aria-hidden="true">SLPS</div>
+
+                    <div class="id-card-top">
+                      <div class="id-brand">
+                        <img class="id-logo" src="assets/logo.webp" alt="SLPS Logo" />
+                        <div>
+                          <strong>SLPS VAPI</strong>
+                          <small>Saurashtra Leuva Patel Samaj</small>
+                        </div>
+                      </div>
+                      <div class="id-card-badge" id="card-badge-type">LIFE MEMBER</div>
+                    </div>
+
+                    <div class="id-card-body">
+                      <div class="id-card-photo-box">
+                        <div class="id-avatar-placeholder" id="id-avatar-box">SK</div>
+                        <span class="id-verified-tick" title="Verified Member">✓</span>
+                      </div>
+                      <div class="id-card-info">
+                        <span class="id-label">MEMBER NAME</span>
+                        <strong class="id-full-name" id="card-member-name">Suprince Vijaybhai Kakadiya</strong>
+                        <div class="id-meta-row">
+                          <div>
+                            <span class="id-label">MEMBER ID</span>
+                            <span class="id-code" id="card-member-id">SLPS-2026-1001</span>
+                          </div>
+                          <div>
+                            <span class="id-label">BLOOD GRP</span>
+                            <span class="id-code" id="card-blood-group">B+</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="id-card-bottom">
+                      <div class="id-bottom-details">
+                        <div>
+                          <span class="id-label">REGION</span>
+                          <span id="card-region">Vapi &amp; Valsad District</span>
+                        </div>
+                        <div>
+                          <span class="id-label">VALID THRU</span>
+                          <span>Lifetime</span>
+                        </div>
+                      </div>
+                      <div class="id-qr-box" id="card-qr-box" title="Scan to verify membership">
+                        <div id="card-qr-render"></div>
+                        <small>VERIFIED</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card Action Buttons -->
+                  <div class="card-action-bar">
+                    <button class="button button-small button-outline full-width" id="copy-member-id" type="button">
+                      📋 Copy Member ID
+                    </button>
+                    <button class="button button-small button-outline full-width" id="print-card-trigger" type="button">
+                      🖨️ Print / Save Pass
+                    </button>
+                  </div>
+                </section>
+
+                <!-- Emergency Blood Donors Quick Matcher Widget -->
+                <div class="blood-donor-callout">
+                  <div class="blood-donor-header">
+                    <div class="blood-donor-icon">🩸</div>
+                    <div>
+                      <h4 style="margin:0; font-size:14px; color:var(--dash-danger);">Emergency Blood Helpline</h4>
+                      <p style="margin:2px 0 0; font-size:11.5px; color:var(--dash-muted);">Find community blood donors instantly by blood group</p>
+                    </div>
+                  </div>
+                  <div class="blood-donor-pills" id="emergency-blood-pills">
+                    <button class="blood-pill" data-blood="B+">B+ (4)</button>
+                    <button class="blood-pill" data-blood="O+">O+ (3)</button>
+                    <button class="blood-pill" data-blood="A+">A+ (2)</button>
+                    <button class="blood-pill" data-blood="AB+">AB+ (1)</button>
+                    <button class="blood-pill" data-blood="O-">O- (1)</button>
+                    <button class="blood-pill" data-blood="all">View All Donors</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Announcements, Events & Recent Updates -->
+              <div class="dash-col-right">
+                <!-- Latest Announcements Snippet -->
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>📢</span> Latest Community Notices</h3>
+                    <button class="text-button" data-jump-tab="announcements" type="button" style="font-size:12px; color:var(--dash-green-dark); font-weight:700;">
+                      View All (4) →
+                    </button>
+                  </div>
+                  <div id="overview-announcements-list"></div>
+                </div>
+
+                <!-- Upcoming Community Events -->
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>🗓️</span> Upcoming Samaj Events</h3>
+                    <span class="events-badge">3 Scheduled</span>
+                  </div>
+                  <div class="events-list" id="overview-events-list">
+                    <article class="event-item">
+                      <div class="event-date-col">
+                        <span class="event-month">NOV</span>
+                        <span class="event-day">28</span>
+                      </div>
+                      <div class="event-info-col">
+                        <h3>SLPS Annual Sneha Milan &amp; Cultural Night 2026</h3>
+                        <p class="event-meta">📍 Vapi Samaj Bhavan Main Auditorium &bull; ⏰ 6:00 PM onwards</p>
+                        <p class="event-desc">Grand gathering with Kathiyawadi community dinner, cultural dance, and student felicitation.</p>
+                      </div>
+                      <div class="event-action-col">
+                        <span class="event-rsvp-tag is-registered">✓ Registered</span>
+                      </div>
+                    </article>
+
+                    <article class="event-item">
+                      <div class="event-date-col">
+                        <span class="event-month">DEC</span>
+                        <span class="event-day">14</span>
+                      </div>
+                      <div class="event-info-col">
+                        <h3>Mega Blood Donation &amp; Free Medical Health Camp</h3>
+                        <p class="event-meta">📍 GIDC Recreation Ground, Vapi &bull; ⏰ 8:30 AM – 3:00 PM</p>
+                        <p class="event-desc">Red Cross emergency blood drive with specialized eye, diabetes, and cardiology checkups.</p>
+                      </div>
+                      <div class="event-action-col">
+                        <button class="button button-small button-outline rsvp-toggle" type="button" data-event="blood-camp">
+                          Volunteer / RSVP
+                        </button>
+                      </div>
+                    </article>
+
+                    <article class="event-item">
+                      <div class="event-date-col">
+                        <span class="event-month">JAN</span>
+                        <span class="event-day">10</span>
+                      </div>
+                      <div class="event-info-col">
+                        <h3>Youth Career Guidance &amp; Higher Education Conclave</h3>
+                        <p class="event-meta">📍 Samaj Hall B &bull; ⏰ 10:00 AM – 2:00 PM</p>
+                        <p class="event-desc">Mentorship for 10th/12th, engineering, medical, study-abroad, and civil services aspirants.</p>
+                      </div>
+                      <div class="event-action-col">
+                        <button class="button button-small button-outline rsvp-toggle" type="button" data-event="youth-conclave">
+                          RSVP Free
+                        </button>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+
+                <!-- Recently Registered Community Businesses Snippet -->
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>🏢</span> Recently Registered Businesses</h3>
+                    <button class="text-button" data-jump-tab="business" type="button" style="font-size:12px; color:var(--dash-green-dark); font-weight:700;">
+                      Explore All →
+                    </button>
+                  </div>
+                  <div id="overview-businesses-list" style="display:flex; flex-direction:column; gap:12px;"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 2: MY PROFILE (Section 1)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile" hidden>
+            <div class="profile-view-layout">
+              <!-- Profile Left Sidebar -->
+              <div class="profile-sidebar-card">
+                <div class="profile-avatar-large-wrap">
+                  <div class="profile-avatar-large" id="profile-large-avatar">SK</div>
+                  <label for="profile-photo-upload" class="profile-photo-change-btn" title="Upload new photo">
+                    📷
+                  </label>
+                  <input type="file" id="profile-photo-upload" accept="image/*" hidden />
+                </div>
+
+                <h3 id="profile-card-name">Suprince Vijaybhai Kakadiya</h3>
+                <div class="profile-sidebar-role" id="profile-card-role">Software Engineer &bull; Verified Member</div>
+                <span class="status-badge-verified">✓ Life Membership Active</span>
+
+                <div class="profile-sidebar-meta">
+                  <div>
+                    <span>Member ID:</span>
+                    <strong id="stat-member-id">SLPS-2026-1001</strong>
+                  </div>
+                  <div>
+                    <span>Phone:</span>
+                    <strong id="stat-phone">+91 94081 91506</strong>
+                  </div>
+                  <div>
+                    <span>Region:</span>
+                    <strong id="stat-region">Vapi &amp; Valsad</strong>
+                  </div>
+                  <div>
+                    <span>Blood Group:</span>
+                    <strong id="stat-blood-group">B+</strong>
+                  </div>
+                  <div>
+                    <span>Joined Date:</span>
+                    <strong id="stat-joined-date">14 Jan 2024</strong>
+                  </div>
+                </div>
+
+                <!-- Profile Actions (Section 1.4) -->
+                <div class="profile-sidebar-actions">
+                  <button class="button button-primary button-small full-width" id="open-edit-profile-modal" type="button">
+                    ✏️ Edit Profile Details
+                  </button>
+                  <button class="button button-outline button-small full-width" id="view-profile-qr-btn" type="button">
+                    📱 View Digital QR Code
+                  </button>
+                  <button class="button button-outline button-small full-width" data-jump-tab="family" type="button">
+                    👨‍👩‍👧‍👦 View Family Members
+                  </button>
+                  <button class="button button-outline button-small full-width" id="print-card-btn-2" type="button">
+                    🖨️ Download / Print Pass
+                  </button>
+                </div>
+              </div>
+
+              <!-- Profile Right Details -->
+              <div class="profile-main-content">
+                <!-- 1.1 Personal Information -->
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>1.1</span> Personal Information</h3>
+                    <span class="card-pill">Verified Record</span>
+                  </div>
+                  <dl class="profile-details">
+                    <div>
+                      <dt>Full Name</dt>
+                      <dd id="profile-name">Suprince Vijaybhai Kakadiya</dd>
+                    </div>
+                    <div>
+                      <dt>Mobile Number</dt>
+                      <dd id="profile-phone">+91 94081 91506</dd>
+                    </div>
+                    <div>
+                      <dt>Gmail Address</dt>
+                      <dd id="profile-email">kakadiyasuprince@gmail.com</dd>
+                    </div>
+                    <div>
+                      <dt>Date of Birth</dt>
+                      <dd id="profile-dob">11 January 2006 (Age 20)</dd>
+                    </div>
+                    <div>
+                      <dt>Gender</dt>
+                      <dd id="profile-gender">Male</dd>
+                    </div>
+                    <div>
+                      <dt>Marital Status</dt>
+                      <dd id="profile-marital">Single</dd>
+                    </div>
+                    <div>
+                      <dt>Blood Group</dt>
+                      <dd id="profile-blood-group">B+ (Active in Emergency Circle)</dd>
+                    </div>
+                    <div>
+                      <dt>Occupation</dt>
+                      <dd id="profile-occupation">Software Engineer</dd>
+                    </div>
+                    <div>
+                      <dt>Qualification</dt>
+                      <dd id="profile-qualification">B.Tech in Computer Science &amp; Engineering</dd>
+                    </div>
+                    <div>
+                      <dt>Membership Type</dt>
+                      <dd id="stat-membership-type">Active Life Member</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <!-- 1.2 Permanent Address -->
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>1.2</span> Permanent Address (Vapi Area)</h3>
+                  </div>
+                  <dl class="profile-details">
+                    <div>
+                      <dt>House / Flat Number</dt>
+                      <dd id="profile-perm-house">401, Yashvi Nestoya</dd>
+                    </div>
+                    <div>
+                      <dt>Street / Area</dt>
+                      <dd id="profile-perm-street">Chharwada Road</dd>
+                    </div>
+                    <div>
+                      <dt>Village / City</dt>
+                      <dd id="profile-perm-city">Vapi</dd>
+                    </div>
+                    <div>
+                      <dt>District</dt>
+                      <dd id="profile-perm-district">Valsad</dd>
+                    </div>
+                    <div>
+                      <dt>State</dt>
+                      <dd id="profile-perm-state">Gujarat</dd>
+                    </div>
+                    <div>
+                      <dt>PIN Code</dt>
+                      <dd id="profile-perm-pincode">396191</dd>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                      <dt>Complete Residential Address</dt>
+                      <dd id="profile-address">401, Yashvi Nestoya, Chharwada Vapi, Valsad, Gujarat - 396191</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <!-- 1.3 Native Address (Saurashtra) -->
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>1.3</span> Native Address (Saurashtra Homeland)</h3>
+                  </div>
+                  <dl class="profile-details">
+                    <div>
+                      <dt>Native Place / Village</dt>
+                      <dd id="profile-native">Roghel, Saurashtra</dd>
+                    </div>
+                    <div>
+                      <dt>House / Street / Area</dt>
+                      <dd id="profile-native-street">Sardar Chowk, Main Bazar</dd>
+                    </div>
+                    <div>
+                      <dt>Taluka / City</dt>
+                      <dd id="profile-native-city">Savarkundla</dd>
+                    </div>
+                    <div>
+                      <dt>District (Saurashtra)</dt>
+                      <dd id="profile-native-district">Amreli</dd>
+                    </div>
+                    <div>
+                      <dt>State</dt>
+                      <dd>Gujarat</dd>
+                    </div>
+                    <div>
+                      <dt>Native PIN Code</dt>
+                      <dd id="profile-native-pin">365601</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <!-- 15.5 Privacy & Security Settings -->
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>🛡️</span> Privacy &amp; Digital QR Settings</h3>
+                    <span class="card-pill">Member Privacy Control</span>
+                  </div>
+                  <p style="font-size:12px; color:var(--dash-muted); margin-bottom:16px;">
+                    Control what personal details are publicly visible when other members or authorities scan your digital QR code.
+                  </p>
+                  <div style="display:flex; flex-direction:column; gap:12px;">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="privacy-show-phone" checked />
+                      <span>Show Mobile Number on public QR profile scan</span>
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="privacy-show-email" checked />
+                      <span>Show Gmail Address on public QR profile scan</span>
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="privacy-blood-circle" checked />
+                      <span>List profile in Samaj Emergency Blood Donor Circle (Recommended)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 3: FAMILY MEMBERS (Section 2)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-family" role="tabpanel" aria-labelledby="tab-family" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Family Members</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Manage and register family members linked to your primary account (<span id="family-summary-count">3 Members</span>).
+                </p>
+              </div>
+              <button class="button button-small button-primary" id="open-add-family-modal" type="button">
+                + Add Family Member
+              </button>
+            </div>
+
+            <div class="family-grid" id="family-grid-container"></div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 4: BUSINESS DIRECTORY (Section 3)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-business" role="tabpanel" aria-labelledby="tab-business" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Samaj Business Directory</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Register your business, explore enterprises by fellow Leuva Patel members, and connect instantly via WhatsApp.
+                </p>
+              </div>
+              <button class="button button-small button-primary" id="open-add-business-modal" type="button">
+                + Register New Business
+              </button>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="business-filter-bar" id="business-category-filters">
+              <button class="category-filter-btn is-active" data-cat="all">All Categories</button>
+              <button class="category-filter-btn" data-cat="Textile">Textiles</button>
+              <button class="category-filter-btn" data-cat="IT & Software">IT &amp; Software</button>
+              <button class="category-filter-btn" data-cat="Manufacturing">Manufacturing</button>
+              <button class="category-filter-btn" data-cat="Food & Restaurant">Food &amp; Catering</button>
+              <button class="category-filter-btn" data-cat="Real Estate">Real Estate</button>
+              <button class="category-filter-btn" data-cat="Agriculture">Agriculture &amp; Seeds</button>
+              <button class="category-filter-btn" data-cat="Healthcare">Healthcare</button>
+            </div>
+
+            <div class="business-grid" id="business-grid-container"></div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 5: JOB PORTAL & TALENT DIRECTORY (Section 4)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-job" role="tabpanel" aria-labelledby="tab-job" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Samaj Career &amp; Employment Portal</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Professional details, job opportunities, and talent networking for Saurashtra Leuva Patel Samaj members.
+                </p>
+              </div>
+              <button class="button button-small button-primary" id="open-register-job-modal" type="button">
+                ✏️ Update My Job Profile
+              </button>
+            </div>
+
+            <!-- Subtabs: My Registration vs Community Talent -->
+            <div class="segmented-subtabs">
+              <button class="segmented-subtab is-active" data-subtab="my-job">My Registered Job Profile</button>
+              <button class="segmented-subtab" data-subtab="job-directory">Community Talent Directory</button>
+            </div>
+
+            <!-- Subpane 1: My Registered Job Profile -->
+            <div id="subpane-my-job">
+              <div class="dash-card">
+                <div class="dash-card-header">
+                  <h3><span>💼</span> My Professional &amp; Employment Record</h3>
+                  <span class="job-availability-badge badge-open" id="my-job-availability-badge">Open to Opportunities</span>
+                </div>
+                <dl class="profile-details">
+                  <div>
+                    <dt>Candidate Name</dt>
+                    <dd id="my-job-name">Suprince Vijaybhai Kakadiya</dd>
+                  </div>
+                  <div>
+                    <dt>Highest Qualification</dt>
+                    <dd id="my-job-qualification">B.Tech in Computer Science &amp; Engineering</dd>
+                  </div>
+                  <div>
+                    <dt>Primary Occupation / Role</dt>
+                    <dd id="my-job-occupation">Full Stack Web Developer &bull; Cloud Engineer</dd>
+                  </div>
+                  <div>
+                    <dt>Experience Level</dt>
+                    <dd id="my-job-experience">1-3 Years</dd>
+                  </div>
+                  <div>
+                    <dt>Current Organization</dt>
+                    <dd id="my-job-company">Patel Cloud Technologies</dd>
+                  </div>
+                  <div>
+                    <dt>Current Job Position</dt>
+                    <dd id="my-job-position">Software Engineer</dd>
+                  </div>
+                  <div>
+                    <dt>Preferred Job Location</dt>
+                    <dd id="my-job-location">Vapi / Surat / Remote</dd>
+                  </div>
+                  <div>
+                    <dt>Expected Annual Salary</dt>
+                    <dd id="my-job-salary">₹ 8,50,000 / year</dd>
+                  </div>
+                  <div>
+                    <dt>Job Type Preferred</dt>
+                    <dd id="my-job-type">Full Time / Contract</dd>
+                  </div>
+                  <div>
+                    <dt>Contact Mobile &amp; Email</dt>
+                    <dd>+91 94081 91506 &bull; kakadiyasuprince@gmail.com</dd>
+                  </div>
+                  <div style="grid-column: 1 / -1;">
+                    <dt>Skills &amp; Competencies</dt>
+                    <div class="skill-tag-pills" id="my-job-skills-tags">
+                      <span class="skill-pill">JavaScript</span>
+                      <span class="skill-pill">TypeScript</span>
+                      <span class="skill-pill">React</span>
+                      <span class="skill-pill">Node.js</span>
+                      <span class="skill-pill">Python</span>
+                      <span class="skill-pill">Cloud Architecture</span>
+                    </div>
+                  </div>
+                  <div style="grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                      <dt>Uploaded Resume</dt>
+                      <dd id="my-job-resume-label">📄 Suprince_Kakadiya_Resume.pdf (Verified)</dd>
+                    </div>
+                    <button class="button button-small button-outline" id="download-my-resume-btn" type="button">
+                      📥 Download Resume
+                    </button>
+                  </div>
+                </dl>
+              </div>
+            </div>
+
+            <!-- Subpane 2: Community Talent Directory -->
+            <div id="subpane-job-directory" hidden>
+              <div class="job-seeker-grid" id="job-directory-container"></div>
+            </div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 6: MATRIMONIAL PORTAL (Section 5)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-matrimonial" role="tabpanel" aria-labelledby="tab-matrimonial" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Samaj Matrimonial Portal</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Respectful, verified community matchmaking for self and family members.
+                </p>
+              </div>
+              <button class="button button-small button-primary" id="open-register-matrimonial-modal" type="button">
+                + Register Matrimonial Profile
+              </button>
+            </div>
+
+            <!-- Subtabs: My Registration vs Browse Community Profiles -->
+            <div class="segmented-subtabs">
+              <button class="segmented-subtab is-active" data-subtab="browse-matrimonial">Browse Community Profiles</button>
+              <button class="segmented-subtab" data-subtab="my-matrimonial">My Registered Profile</button>
+            </div>
+
+            <!-- Subpane 1: Browse Profiles -->
+            <div id="subpane-browse-matrimonial">
+              <div class="business-filter-bar" id="matrimonial-gender-filters">
+                <button class="category-filter-btn is-active" data-gender="all">All Profiles (4)</button>
+                <button class="category-filter-btn" data-gender="Female">Brides (Kanya)</button>
+                <button class="category-filter-btn" data-gender="Male">Grooms (Yuvak)</button>
+              </div>
+              <div class="matrimonial-grid" id="matrimonial-grid-container"></div>
+            </div>
+
+            <!-- Subpane 2: My Matrimonial Profile -->
+            <div id="subpane-my-matrimonial" hidden>
+              <div class="dash-card" id="my-matrimonial-card"></div>
+            </div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 7: MEMBER DIRECTORY (Section 6)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-directory" role="tabpanel" aria-labelledby="tab-directory" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Community Member Directory</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Search all verified members of Saurashtra Leuva Patel Samaj Vapi.
+                </p>
+              </div>
+            </div>
+
+            <!-- Search and Filter Controls (Section 6.2) -->
+            <div class="directory-filter-row">
+              <div class="form-field">
+                <input type="search" id="dir-search-input" placeholder="Search by name, member ID, or phone…" />
+              </div>
+              <div class="form-field">
+                <select id="dir-filter-city">
+                  <option value="all">All Cities / Regions</option>
+                  <option value="Vapi">Vapi</option>
+                  <option value="Valsad">Valsad</option>
+                  <option value="Surat">Surat</option>
+                  <option value="Pardi">Pardi</option>
+                  <option value="Ahmedabad">Ahmedabad</option>
+                  <option value="Rajkot">Rajkot</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <select id="dir-filter-blood">
+                  <option value="all">All Blood Groups</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <select id="dir-filter-gender">
+                  <option value="all">All Genders</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Member Table -->
+            <div class="directory-table-wrap">
+              <table class="directory-table">
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Member ID</th>
+                    <th>Blood Group</th>
+                    <th>City / District</th>
+                    <th>Occupation</th>
+                    <th>Contact</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="directory-table-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 8: COMMITTEE MEMBERS (Section 7)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-committee" role="tabpanel" aria-labelledby="tab-committee" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Executive &amp; Managing Committee</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Current office bearers of Saurashtra Leuva Patel Samaj Vapi &amp; Valsad District (Term 2024-2027).
+                </p>
+              </div>
+            </div>
+            <div class="committee-grid" id="committee-grid-container"></div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 9: TRUSTEES (Section 8)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-trustees" role="tabpanel" aria-labelledby="tab-trustees" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Board of Trustees</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Guiding patrons and trustees of the Saurashtra Leuva Patel Samaj Charitable Trust.
+                </p>
+              </div>
+            </div>
+            <div class="committee-grid" id="trustees-grid-container"></div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 10: ANNOUNCEMENTS & EVENTS (Section 9)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-announcements" role="tabpanel" aria-labelledby="tab-announcements" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Announcements &amp; Community Notices</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Official circulars, urgent emergency medical alerts, and community notices.
+                </p>
+              </div>
+              <button class="button button-small button-primary" id="open-post-announcement-modal" type="button">
+                + Post Announcement
+              </button>
+            </div>
+
+            <!-- Priority Filters -->
+            <div class="business-filter-bar" id="announcement-priority-filters">
+              <button class="category-filter-btn is-active" data-prio="all">All Notices (4)</button>
+              <button class="category-filter-btn" data-prio="Urgent">🚨 Urgent Alerts</button>
+              <button class="category-filter-btn" data-prio="Important">⭐ Important Notices</button>
+              <button class="category-filter-btn" data-prio="Normal">Regular Circulars</button>
+            </div>
+
+            <div id="announcements-list-container"></div>
+          </section>
+
+          <!-- ==========================================================
+               TAB PANE 11: DIGITAL SAMAJ ID & QR PASS (Section 12)
+               ========================================================== -->
+          <section class="dash-tab-pane" id="pane-idcard" role="tabpanel" aria-labelledby="tab-idcard" hidden>
+            <div class="section-subhead">
+              <div>
+                <h2 style="font-size:22px; margin:0 0 4px;">Digital Member Identity &amp; QR Pass</h2>
+                <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
+                  Your official Samaj identity credential with dynamic QR verification code.
+                </p>
+              </div>
+            </div>
+
+            <div class="qr-system-view">
+              <!-- Left: High Res QR Card Box -->
+              <div class="qr-card-box">
+                <h3 style="margin:0 0 4px; font-size:17px;">Digital Verification QR</h3>
+                <p style="margin:0 0 16px; font-size:12px; color:var(--dash-muted);">
+                  Linked to Member ID: <strong id="qr-pane-member-id">SLPS-2026-1001</strong>
+                </p>
+
+                <div class="qr-code-svg-render" id="main-qr-svg-render"></div>
+
+                <div class="qr-details-strip">
+                  <div><span>Holder Name:</span> <strong id="qr-pane-name">Suprince Vijaybhai Kakadiya</strong></div>
+                  <div><span>Blood Group:</span> <strong id="qr-pane-blood">B+</strong></div>
+                  <div><span>Region:</span> <strong>Vapi &amp; Valsad District</strong></div>
+                  <div><span>Status:</span> <strong class="text-success">Verified Active Life Member</strong></div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:20px;">
+                  <button class="button button-small button-primary full-width" id="download-qr-svg-btn" type="button">
+                    📥 Download QR Code (SVG)
+                  </button>
+                  <button class="button button-small button-outline full-width" id="print-official-badge-btn" type="button">
+                    🖨️ Print Full Samaj ID Badge
+                  </button>
+                  <button class="button button-small button-outline full-width" id="copy-qr-link-btn" type="button">
+                    🔗 Copy Verification Link
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Info & Privacy explanation -->
+              <div>
+                <div class="dash-card">
+                  <div class="dash-card-header">
+                    <h3><span>ℹ️</span> About Digital Samaj QR System</h3>
+                  </div>
+                  <p style="font-size:13px; color:var(--dash-ink); line-height:1.7;">
+                    Every registered member of Saurashtra Leuva Patel Samaj receives an encrypted digital QR identity code. This QR pass is officially recognized for:
+                  </p>
+                  <ul style="font-size:13px; color:var(--dash-muted); line-height:1.8; padding-left:20px;">
+                    <li>Entry verification at Annual Sneha Milan and cultural programs.</li>
+                    <li>Priority booking and subsidized rates for Samaj Bhavan AC halls and dining pavilions.</li>
+                    <li>Educational merit scholarship application identity verification.</li>
+                    <li>Emergency blood donor identification across South Gujarat hospitals.</li>
+                  </ul>
+                </div>
+
+                <div class="dash-card demo-credentials-hub">
+                  <div class="demo-hub-header">
+                    <div class="demo-live-badge">
+                      <span class="demo-live-dot"></span>
+                      <span>Demo Environment Controls</span>
+                    </div>
+                  </div>
+                  <p class="demo-hub-text">
+                    Testing this dynamic dashboard? You can reset demo storage to defaults anytime.
+                  </p>
+                  <div class="demo-hub-meta">
+                    <div><span>Standard Demo Phone:</span> <strong>+91 94081 91506</strong></div>
+                    <div><span>Standard Demo OTP:</span> <strong>123456</strong></div>
+                  </div>
+                  <div class="demo-hub-actions">
+                    <button class="button button-small button-outline full-width" id="reset-demo-storage" type="button">
+                      Reset Demo Storage to Defaults ↺
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Loading State -->
+        <main class="dashboard-loading section-wrap" id="dashboard-loading" role="status">
+          <div class="loading-spinner"></div>
+          <p>Loading your verified member account…</p>
+        </main>
+
+        <!-- Error State -->
+        <p class="dashboard-error section-wrap" id="dashboard-error" role="alert" hidden></p>
       </div>
     </div>
 
-    <!-- Secondary Navigation Tabs Bar (Section 10) -->
-    <nav class="dash-nav-bar" aria-label="Dashboard Modules">
-      <div class="dash-nav-inner" id="module-tabs-list" role="tablist">
-        <button class="dash-nav-tab is-active" role="tab" aria-selected="true" data-tab="overview">
-          <span class="dash-nav-tab-icon">📊</span> Overview
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="profile">
-          <span class="dash-nav-tab-icon">👤</span> My Profile
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="family">
-          <span class="dash-nav-tab-icon">👨‍👩‍👧‍👦</span> Family Members
-          <span class="dash-nav-counter" id="tab-family-count">3</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="business">
-          <span class="dash-nav-tab-icon">🏢</span> Business Directory
-          <span class="dash-nav-counter" id="tab-business-count">6</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="job">
-          <span class="dash-nav-tab-icon">💼</span> Job Portal
-          <span class="dash-nav-counter" id="tab-job-count">4</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="matrimonial">
-          <span class="dash-nav-tab-icon">💍</span> Matrimonial
-          <span class="dash-nav-counter" id="tab-matrimonial-count">4</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="directory">
-          <span class="dash-nav-tab-icon">👥</span> Member Directory
-          <span class="dash-nav-counter" id="tab-members-count">12</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="committee">
-          <span class="dash-nav-tab-icon">🏛️</span> Committee Members
-          <span class="dash-nav-counter" id="tab-committee-count">8</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="trustees">
-          <span class="dash-nav-tab-icon">📜</span> Trustees
-          <span class="dash-nav-counter" id="tab-trustees-count">5</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="announcements">
-          <span class="dash-nav-tab-icon">📢</span> Announcements &amp; Events
-          <span class="dash-nav-counter" id="tab-announcements-count">4</span>
-        </button>
-        <button class="dash-nav-tab" role="tab" aria-selected="false" data-tab="idcard">
-          <span class="dash-nav-tab-icon">🪪</span> Samaj ID Pass &amp; QR
-        </button>
-      </div>
-    </nav>
-
-    <!-- Main Container -->
-    <main class="dash-main-container" id="dashboard-main" hidden>
-      <!-- ==========================================================
-           TAB PANE 1: DASHBOARD OVERVIEW (Section 11)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-overview" role="tabpanel" aria-labelledby="tab-overview">
-        <!-- Hero Welcome Banner -->
-        <div class="dash-welcome-banner">
-          <div class="dash-welcome-copy">
-            <div class="eyebrow"><span></span> SLPS Vapi Member Management Portal</div>
-            <h1>
-              Namaste, <em id="member-display-name">Suprince.</em>
-            </h1>
-            <p>
-              Your Samaj digital membership is <strong class="text-success">active &amp; verified</strong>. Manage your family records, explore community businesses, register for employment, and stay updated with official Samaj announcements.
-            </p>
-          </div>
-          <div class="dash-welcome-actions">
-            <span class="status-badge-verified">
-              <span class="verified-dot"></span> Verified Life Member
-            </span>
-            <div style="display:flex; gap:8px;">
-              <button class="button button-small button-primary" id="quick-print-card-btn" type="button">
-                🖨️ Print Samaj ID Pass
-              </button>
-              <button class="button button-small button-outline" id="quick-view-qr-btn" type="button">
-                📱 My Official QR
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Urgent Announcement Ticker (if present) -->
-        <div class="dash-urgent-ticker" id="dash-urgent-ticker" title="Click to view details">
-          <span class="urgent-pill">Urgent Alert</span>
-          <span class="urgent-ticker-text" id="urgent-ticker-text">
-            Emergency Blood Request: Donors with B+ and O- needed at Haria Rotary Hospital, Vapi.
-          </span>
-          <span class="urgent-ticker-link">View Notice &amp; Contacts →</span>
-        </div>
-
-        <!-- KPI Metrics Grid (Section 11.3) -->
-        <div class="dash-kpi-grid">
-          <div class="kpi-card" data-jump-tab="directory">
-            <div class="kpi-icon-wrap">👥</div>
-            <span class="kpi-label">Community Members</span>
-            <strong class="kpi-number" id="kpi-members-count">12</strong>
-            <span class="kpi-sub">Verified &amp; Registered</span>
-          </div>
-
-          <div class="kpi-card" data-jump-tab="family">
-            <div class="kpi-icon-wrap">👨‍👩‍👧‍👦</div>
-            <span class="kpi-label">My Family Members</span>
-            <strong class="kpi-number" id="kpi-family-count">3</strong>
-            <span class="kpi-sub">Registered Under Account</span>
-          </div>
-
-          <div class="kpi-card" data-jump-tab="business">
-            <div class="kpi-icon-wrap">🏢</div>
-            <span class="kpi-label">Active Businesses</span>
-            <strong class="kpi-number" id="kpi-business-count">6</strong>
-            <span class="kpi-sub">Directory Listings</span>
-          </div>
-
-          <div class="kpi-card" data-jump-tab="job">
-            <div class="kpi-icon-wrap">💼</div>
-            <span class="kpi-label">Job Seekers / Talent</span>
-            <strong class="kpi-number" id="kpi-job-count">4</strong>
-            <span class="kpi-sub">Career Network</span>
-          </div>
-
-          <div class="kpi-card" data-jump-tab="matrimonial">
-            <div class="kpi-icon-wrap">💍</div>
-            <span class="kpi-label">Matrimonial Profiles</span>
-            <strong class="kpi-number" id="kpi-matrimonial-count">4</strong>
-            <span class="kpi-sub">Verified Matchmaking</span>
-          </div>
-
-          <div class="kpi-card" data-jump-tab="directory" data-filter="blood">
-            <div class="kpi-icon-wrap">🩸</div>
-            <span class="kpi-label">Blood Donor Circle</span>
-            <strong class="kpi-number" id="kpi-blood-count">9</strong>
-            <span class="kpi-sub">Emergency Ready</span>
-          </div>
-        </div>
-
-        <!-- Quick Access Module Cards (Section 11.2) -->
-        <div class="section-subhead">
-          <h3><span>⚡</span> Quick Access Modules</h3>
-          <span style="font-size:12px; color:var(--dash-muted);">Direct shortcuts to all 9 system modules</span>
-        </div>
-        <div class="dash-quick-cards-grid">
-          <div class="quick-card" data-jump-tab="profile">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">👤</div>
-              <span class="quick-card-badge">Module 01</span>
-            </div>
-            <h4>My Profile</h4>
-            <p>Personal information, verified contact details, permanent &amp; native Saurashtra addresses.</p>
-            <span class="quick-card-action">Manage Profile →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="family">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">👨‍👩‍👧‍👦</div>
-              <span class="quick-card-badge">Module 02</span>
-            </div>
-            <h4>Family Members</h4>
-            <p>Register family records, relationship ties, individual digital QR identity cards.</p>
-            <span class="quick-card-action">Manage Family →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="business">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">🏢</div>
-              <span class="quick-card-badge">Module 03</span>
-            </div>
-            <h4>Business Directory</h4>
-            <p>Promote your business, search community enterprises, connect via direct WhatsApp.</p>
-            <span class="quick-card-action">Browse Directory →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="job">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">💼</div>
-              <span class="quick-card-badge">Module 04</span>
-            </div>
-            <h4>Job Registration</h4>
-            <p>Professional employment profile, skills showcase, resume uploads, and community recruitment.</p>
-            <span class="quick-card-action">View Jobs Portal →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="matrimonial">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">💍</div>
-              <span class="quick-card-badge">Module 05</span>
-            </div>
-            <h4>Matrimonial Registration</h4>
-            <p>Respectful community matchmaking, partner preferences, family background &amp; verified bio-data.</p>
-            <span class="quick-card-action">Explore Matches →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="directory">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">👥</div>
-              <span class="quick-card-badge">Module 06</span>
-            </div>
-            <h4>Member List</h4>
-            <p>Searchable community roster with filters by city, blood group, profession, and family links.</p>
-            <span class="quick-card-action">Search Directory →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="committee">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">🏛️</div>
-              <span class="quick-card-badge">Module 07</span>
-            </div>
-            <h4>Committee Members</h4>
-            <p>Executive leaders, President, Secretary, committee designations, and official contact channels.</p>
-            <span class="quick-card-action">View Leadership →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="trustees">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">📜</div>
-              <span class="quick-card-badge">Module 08</span>
-            </div>
-            <h4>Board of Trustees</h4>
-            <p>Distinguished patrons and trustees guiding educational, medical, and community trusts.</p>
-            <span class="quick-card-action">View Trustees →</span>
-          </div>
-
-          <div class="quick-card" data-jump-tab="announcements">
-            <div class="quick-card-top">
-              <div class="quick-card-icon">📢</div>
-              <span class="quick-card-badge">Module 09</span>
-            </div>
-            <h4>Announcements &amp; Events</h4>
-            <p>Official notices, circulars, upcoming Sneha Milan, youth conclaves, and RSVP registration.</p>
-            <span class="quick-card-action">View Notices →</span>
-          </div>
-        </div>
-
-        <!-- Overview Two-Column Split (ID Card & Updates) -->
-        <div class="dash-overview-columns">
-          <!-- Left Column: Digital ID Card Preview & Blood Help -->
-          <div class="dash-col-left">
-            <!-- Digital Member Identity Card -->
-            <section class="digital-id-section" aria-labelledby="id-card-heading">
-              <div class="card-section-header">
-                <h3 id="id-card-heading" style="font-size:16px; margin:0;">Digital Membership Pass</h3>
-                <span class="card-pill">Official 2026</span>
-              </div>
-
-              <!-- The Official Holographic Card -->
-              <div class="samaj-id-card" id="printable-samaj-card">
-                <div class="id-card-sheen" aria-hidden="true"></div>
-                <div class="id-card-watermark" aria-hidden="true">SLPS</div>
-
-                <div class="id-card-top">
-                  <div class="id-brand">
-                    <img class="id-logo" src="assets/logo.webp" alt="SLPS Logo" />
-                    <div>
-                      <strong>SLPS VAPI</strong>
-                      <small>Saurashtra Leuva Patel Samaj</small>
-                    </div>
-                  </div>
-                  <div class="id-card-badge" id="card-badge-type">LIFE MEMBER</div>
-                </div>
-
-                <div class="id-card-body">
-                  <div class="id-card-photo-box">
-                    <div class="id-avatar-placeholder" id="id-avatar-box">SK</div>
-                    <span class="id-verified-tick" title="Verified Member">✓</span>
-                  </div>
-                  <div class="id-card-info">
-                    <span class="id-label">MEMBER NAME</span>
-                    <strong class="id-full-name" id="card-member-name">Suprince Vijaybhai Kakadiya</strong>
-                    <div class="id-meta-row">
-                      <div>
-                        <span class="id-label">MEMBER ID</span>
-                        <span class="id-code" id="card-member-id">SLPS-2026-1001</span>
-                      </div>
-                      <div>
-                        <span class="id-label">BLOOD GRP</span>
-                        <span class="id-code" id="card-blood-group">B+</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="id-card-bottom">
-                  <div class="id-bottom-details">
-                    <div>
-                      <span class="id-label">CHAPTER</span>
-                      <span id="card-chapter">Vapi &amp; Valsad District</span>
-                    </div>
-                    <div>
-                      <span class="id-label">VALID THRU</span>
-                      <span>Lifetime</span>
-                    </div>
-                  </div>
-                  <div class="id-qr-box" id="card-qr-box" title="Scan to verify membership">
-                    <div id="card-qr-render"></div>
-                    <small>VERIFIED</small>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Card Action Buttons -->
-              <div class="card-action-bar">
-                <button class="button button-small button-outline full-width" id="copy-member-id" type="button">
-                  📋 Copy Member ID
-                </button>
-                <button class="button button-small button-outline full-width" id="print-card-trigger" type="button">
-                  🖨️ Print / Save Pass
-                </button>
-              </div>
-            </section>
-
-            <!-- Emergency Blood Donors Quick Matcher Widget -->
-            <div class="blood-donor-callout">
-              <div class="blood-donor-header">
-                <div class="blood-donor-icon">🩸</div>
-                <div>
-                  <h4 style="margin:0; font-size:14px; color:var(--dash-danger);">Emergency Blood Helpline</h4>
-                  <p style="margin:2px 0 0; font-size:11.5px; color:var(--dash-muted);">Find community blood donors instantly by blood group</p>
-                </div>
-              </div>
-              <div class="blood-donor-pills" id="emergency-blood-pills">
-                <button class="blood-pill" data-blood="B+">B+ (4)</button>
-                <button class="blood-pill" data-blood="O+">O+ (3)</button>
-                <button class="blood-pill" data-blood="A+">A+ (2)</button>
-                <button class="blood-pill" data-blood="AB+">AB+ (1)</button>
-                <button class="blood-pill" data-blood="O-">O- (1)</button>
-                <button class="blood-pill" data-blood="all">View All Donors</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Column: Announcements, Events & Recent Updates -->
-          <div class="dash-col-right">
-            <!-- Latest Announcements Snippet -->
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>📢</span> Latest Community Notices</h3>
-                <button class="text-button" data-jump-tab="announcements" type="button" style="font-size:12px; color:var(--dash-green-dark); font-weight:700;">
-                  View All (4) →
-                </button>
-              </div>
-              <div id="overview-announcements-list"></div>
-            </div>
-
-            <!-- Upcoming Community Events -->
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>🗓️</span> Upcoming Samaj Events</h3>
-                <span class="events-badge">3 Scheduled</span>
-              </div>
-              <div class="events-list" id="overview-events-list">
-                <article class="event-item">
-                  <div class="event-date-col">
-                    <span class="event-month">NOV</span>
-                    <span class="event-day">28</span>
-                  </div>
-                  <div class="event-info-col">
-                    <h3>SLPS Annual Sneha Milan &amp; Cultural Night 2026</h3>
-                    <p class="event-meta">📍 Vapi Samaj Bhavan Main Auditorium &bull; ⏰ 6:00 PM onwards</p>
-                    <p class="event-desc">Grand gathering with Kathiyawadi community dinner, cultural dance, and student felicitation.</p>
-                  </div>
-                  <div class="event-action-col">
-                    <span class="event-rsvp-tag is-registered">✓ Registered</span>
-                  </div>
-                </article>
-
-                <article class="event-item">
-                  <div class="event-date-col">
-                    <span class="event-month">DEC</span>
-                    <span class="event-day">14</span>
-                  </div>
-                  <div class="event-info-col">
-                    <h3>Mega Blood Donation &amp; Free Medical Health Camp</h3>
-                    <p class="event-meta">📍 GIDC Recreation Ground, Vapi &bull; ⏰ 8:30 AM – 3:00 PM</p>
-                    <p class="event-desc">Red Cross emergency blood drive with specialized eye, diabetes, and cardiology checkups.</p>
-                  </div>
-                  <div class="event-action-col">
-                    <button class="button button-small button-outline rsvp-toggle" type="button" data-event="blood-camp">
-                      Volunteer / RSVP
-                    </button>
-                  </div>
-                </article>
-
-                <article class="event-item">
-                  <div class="event-date-col">
-                    <span class="event-month">JAN</span>
-                    <span class="event-day">10</span>
-                  </div>
-                  <div class="event-info-col">
-                    <h3>Youth Career Guidance &amp; Higher Education Conclave</h3>
-                    <p class="event-meta">📍 Samaj Hall B &bull; ⏰ 10:00 AM – 2:00 PM</p>
-                    <p class="event-desc">Mentorship for 10th/12th, engineering, medical, study-abroad, and civil services aspirants.</p>
-                  </div>
-                  <div class="event-action-col">
-                    <button class="button button-small button-outline rsvp-toggle" type="button" data-event="youth-conclave">
-                      RSVP Free
-                    </button>
-                  </div>
-                </article>
-              </div>
-            </div>
-
-            <!-- Recently Registered Community Businesses Snippet -->
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>🏢</span> Recently Registered Businesses</h3>
-                <button class="text-button" data-jump-tab="business" type="button" style="font-size:12px; color:var(--dash-green-dark); font-weight:700;">
-                  Explore All →
-                </button>
-              </div>
-              <div id="overview-businesses-list" style="display:flex; flex-direction:column; gap:12px;"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 2: MY PROFILE (Section 1)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile" hidden>
-        <div class="profile-view-layout">
-          <!-- Profile Left Sidebar -->
-          <div class="profile-sidebar-card">
-            <div class="profile-avatar-large-wrap">
-              <div class="profile-avatar-large" id="profile-large-avatar">SK</div>
-              <label for="profile-photo-upload" class="profile-photo-change-btn" title="Upload new photo">
-                📷
-              </label>
-              <input type="file" id="profile-photo-upload" accept="image/*" hidden />
-            </div>
-
-            <h3 id="profile-card-name">Suprince Vijaybhai Kakadiya</h3>
-            <div class="profile-sidebar-role" id="profile-card-role">Software Engineer &bull; Verified Member</div>
-            <span class="status-badge-verified">✓ Life Membership Active</span>
-
-            <div class="profile-sidebar-meta">
-              <div>
-                <span>Member ID:</span>
-                <strong id="stat-member-id">SLPS-2026-1001</strong>
-              </div>
-              <div>
-                <span>Phone:</span>
-                <strong id="stat-phone">+91 94081 91506</strong>
-              </div>
-              <div>
-                <span>Chapter:</span>
-                <strong id="stat-chapter">Vapi &amp; Valsad</strong>
-              </div>
-              <div>
-                <span>Blood Group:</span>
-                <strong id="stat-blood-group">B+</strong>
-              </div>
-              <div>
-                <span>Joined Date:</span>
-                <strong id="stat-joined-date">14 Jan 2024</strong>
-              </div>
-            </div>
-
-            <!-- Profile Actions (Section 1.4) -->
-            <div class="profile-sidebar-actions">
-              <button class="button button-primary button-small full-width" id="open-edit-profile-modal" type="button">
-                ✏️ Edit Profile Details
-              </button>
-              <button class="button button-outline button-small full-width" id="view-profile-qr-btn" type="button">
-                📱 View Digital QR Code
-              </button>
-              <button class="button button-outline button-small full-width" data-jump-tab="family" type="button">
-                👨‍👩‍👧‍👦 View Family Members
-              </button>
-              <button class="button button-outline button-small full-width" id="print-card-btn-2" type="button">
-                🖨️ Download / Print Pass
-              </button>
-            </div>
-          </div>
-
-          <!-- Profile Right Details -->
-          <div class="profile-main-content">
-            <!-- 1.1 Personal Information -->
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>1.1</span> Personal Information</h3>
-                <span class="card-pill">Verified Record</span>
-              </div>
-              <dl class="profile-details">
-                <div>
-                  <dt>Full Name</dt>
-                  <dd id="profile-name">Suprince Vijaybhai Kakadiya</dd>
-                </div>
-                <div>
-                  <dt>Mobile Number</dt>
-                  <dd id="profile-phone">+91 94081 91506</dd>
-                </div>
-                <div>
-                  <dt>Gmail Address</dt>
-                  <dd id="profile-email">kakadiyasuprince@gmail.com</dd>
-                </div>
-                <div>
-                  <dt>Date of Birth</dt>
-                  <dd id="profile-dob">11 January 2006 (Age 20)</dd>
-                </div>
-                <div>
-                  <dt>Gender</dt>
-                  <dd id="profile-gender">Male</dd>
-                </div>
-                <div>
-                  <dt>Marital Status</dt>
-                  <dd id="profile-marital">Single</dd>
-                </div>
-                <div>
-                  <dt>Blood Group</dt>
-                  <dd id="profile-blood-group">B+ (Active in Emergency Circle)</dd>
-                </div>
-                <div>
-                  <dt>Occupation</dt>
-                  <dd id="profile-occupation">Software Engineer</dd>
-                </div>
-                <div>
-                  <dt>Qualification</dt>
-                  <dd id="profile-qualification">B.Tech in Computer Science &amp; Engineering</dd>
-                </div>
-                <div>
-                  <dt>Membership Type</dt>
-                  <dd id="stat-membership-type">Active Life Member</dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- 1.2 Permanent Address -->
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>1.2</span> Permanent Address (Vapi Area)</h3>
-              </div>
-              <dl class="profile-details">
-                <div>
-                  <dt>House / Flat Number</dt>
-                  <dd id="profile-perm-house">401, Yashvi Nestoya</dd>
-                </div>
-                <div>
-                  <dt>Street / Area</dt>
-                  <dd id="profile-perm-street">Chharwada Road</dd>
-                </div>
-                <div>
-                  <dt>Village / City</dt>
-                  <dd id="profile-perm-city">Vapi</dd>
-                </div>
-                <div>
-                  <dt>District</dt>
-                  <dd id="profile-perm-district">Valsad</dd>
-                </div>
-                <div>
-                  <dt>State</dt>
-                  <dd id="profile-perm-state">Gujarat</dd>
-                </div>
-                <div>
-                  <dt>PIN Code</dt>
-                  <dd id="profile-perm-pincode">396191</dd>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <dt>Complete Residential Address</dt>
-                  <dd id="profile-address">401, Yashvi Nestoya, Chharwada Vapi, Valsad, Gujarat - 396191</dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- 1.3 Native Address (Saurashtra) -->
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>1.3</span> Native Address (Saurashtra Homeland)</h3>
-              </div>
-              <dl class="profile-details">
-                <div>
-                  <dt>Native Place / Village</dt>
-                  <dd id="profile-native">Roghel, Saurashtra</dd>
-                </div>
-                <div>
-                  <dt>House / Street / Area</dt>
-                  <dd id="profile-native-street">Sardar Chowk, Main Bazar</dd>
-                </div>
-                <div>
-                  <dt>Taluka / City</dt>
-                  <dd id="profile-native-city">Savarkundla</dd>
-                </div>
-                <div>
-                  <dt>District (Saurashtra)</dt>
-                  <dd id="profile-native-district">Amreli</dd>
-                </div>
-                <div>
-                  <dt>State</dt>
-                  <dd>Gujarat</dd>
-                </div>
-                <div>
-                  <dt>Native PIN Code</dt>
-                  <dd id="profile-native-pin">365601</dd>
-                </div>
-              </dl>
-            </div>
-
-            <!-- 15.5 Privacy & Security Settings -->
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>🛡️</span> Privacy &amp; Digital QR Settings</h3>
-                <span class="card-pill">Member Privacy Control</span>
-              </div>
-              <p style="font-size:12px; color:var(--dash-muted); margin-bottom:16px;">
-                Control what personal details are publicly visible when other members or authorities scan your digital QR code.
-              </p>
-              <div style="display:flex; flex-direction:column; gap:12px;">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="privacy-show-phone" checked />
-                  <span>Show Mobile Number on public QR profile scan</span>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" id="privacy-show-email" checked />
-                  <span>Show Gmail Address on public QR profile scan</span>
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" id="privacy-blood-circle" checked />
-                  <span>List profile in Samaj Emergency Blood Donor Circle (Recommended)</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 3: FAMILY MEMBERS (Section 2)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-family" role="tabpanel" aria-labelledby="tab-family" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Family Members</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Manage and register family members linked to your primary account (<span id="family-summary-count">3 Members</span>).
-            </p>
-          </div>
-          <button class="button button-small button-primary" id="open-add-family-modal" type="button">
-            + Add Family Member
-          </button>
-        </div>
-
-        <div class="family-grid" id="family-grid-container"></div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 4: BUSINESS DIRECTORY (Section 3)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-business" role="tabpanel" aria-labelledby="tab-business" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Samaj Business Directory</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Register your business, explore enterprises by fellow Leuva Patel members, and connect instantly via WhatsApp.
-            </p>
-          </div>
-          <button class="button button-small button-primary" id="open-add-business-modal" type="button">
-            + Register New Business
-          </button>
-        </div>
-
-        <!-- Filter Bar -->
-        <div class="business-filter-bar" id="business-category-filters">
-          <button class="category-filter-btn is-active" data-cat="all">All Categories</button>
-          <button class="category-filter-btn" data-cat="Textile">Textiles</button>
-          <button class="category-filter-btn" data-cat="IT & Software">IT &amp; Software</button>
-          <button class="category-filter-btn" data-cat="Manufacturing">Manufacturing</button>
-          <button class="category-filter-btn" data-cat="Food & Restaurant">Food &amp; Catering</button>
-          <button class="category-filter-btn" data-cat="Real Estate">Real Estate</button>
-          <button class="category-filter-btn" data-cat="Agriculture">Agriculture &amp; Seeds</button>
-          <button class="category-filter-btn" data-cat="Healthcare">Healthcare</button>
-        </div>
-
-        <div class="business-grid" id="business-grid-container"></div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 5: JOB PORTAL & TALENT DIRECTORY (Section 4)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-job" role="tabpanel" aria-labelledby="tab-job" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Samaj Career &amp; Employment Portal</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Professional details, job opportunities, and talent networking for Saurashtra Leuva Patel Samaj members.
-            </p>
-          </div>
-          <button class="button button-small button-primary" id="open-register-job-modal" type="button">
-            ✏️ Update My Job Profile
-          </button>
-        </div>
-
-        <!-- Subtabs: My Registration vs Community Talent -->
-        <div class="segmented-subtabs">
-          <button class="segmented-subtab is-active" data-subtab="my-job">My Registered Job Profile</button>
-          <button class="segmented-subtab" data-subtab="job-directory">Community Talent Directory</button>
-        </div>
-
-        <!-- Subpane 1: My Registered Job Profile -->
-        <div id="subpane-my-job">
-          <div class="dash-card">
-            <div class="dash-card-header">
-              <h3><span>💼</span> My Professional &amp; Employment Record</h3>
-              <span class="job-availability-badge badge-open" id="my-job-availability-badge">Open to Opportunities</span>
-            </div>
-            <dl class="profile-details">
-              <div>
-                <dt>Candidate Name</dt>
-                <dd id="my-job-name">Suprince Vijaybhai Kakadiya</dd>
-              </div>
-              <div>
-                <dt>Highest Qualification</dt>
-                <dd id="my-job-qualification">B.Tech in Computer Science &amp; Engineering</dd>
-              </div>
-              <div>
-                <dt>Primary Occupation / Role</dt>
-                <dd id="my-job-occupation">Full Stack Web Developer &bull; Cloud Engineer</dd>
-              </div>
-              <div>
-                <dt>Experience Level</dt>
-                <dd id="my-job-experience">1-3 Years</dd>
-              </div>
-              <div>
-                <dt>Current Organization</dt>
-                <dd id="my-job-company">Patel Cloud Technologies</dd>
-              </div>
-              <div>
-                <dt>Current Job Position</dt>
-                <dd id="my-job-position">Software Engineer</dd>
-              </div>
-              <div>
-                <dt>Preferred Job Location</dt>
-                <dd id="my-job-location">Vapi / Surat / Remote</dd>
-              </div>
-              <div>
-                <dt>Expected Annual Salary</dt>
-                <dd id="my-job-salary">₹ 8,50,000 / year</dd>
-              </div>
-              <div>
-                <dt>Job Type Preferred</dt>
-                <dd id="my-job-type">Full Time / Contract</dd>
-              </div>
-              <div>
-                <dt>Contact Mobile &amp; Email</dt>
-                <dd>+91 94081 91506 &bull; kakadiyasuprince@gmail.com</dd>
-              </div>
-              <div style="grid-column: 1 / -1;">
-                <dt>Skills &amp; Competencies</dt>
-                <div class="skill-tag-pills" id="my-job-skills-tags">
-                  <span class="skill-pill">JavaScript</span>
-                  <span class="skill-pill">TypeScript</span>
-                  <span class="skill-pill">React</span>
-                  <span class="skill-pill">Node.js</span>
-                  <span class="skill-pill">Python</span>
-                  <span class="skill-pill">Cloud Architecture</span>
-                </div>
-              </div>
-              <div style="grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                  <dt>Uploaded Resume</dt>
-                  <dd id="my-job-resume-label">📄 Suprince_Kakadiya_Resume.pdf (Verified)</dd>
-                </div>
-                <button class="button button-small button-outline" id="download-my-resume-btn" type="button">
-                  📥 Download Resume
-                </button>
-              </div>
-            </dl>
-          </div>
-        </div>
-
-        <!-- Subpane 2: Community Talent Directory -->
-        <div id="subpane-job-directory" hidden>
-          <div class="job-seeker-grid" id="job-directory-container"></div>
-        </div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 6: MATRIMONIAL PORTAL (Section 5)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-matrimonial" role="tabpanel" aria-labelledby="tab-matrimonial" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Samaj Matrimonial Portal</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Respectful, verified community matchmaking for self and family members.
-            </p>
-          </div>
-          <button class="button button-small button-primary" id="open-register-matrimonial-modal" type="button">
-            + Register Matrimonial Profile
-          </button>
-        </div>
-
-        <!-- Subtabs: My Registration vs Browse Community Profiles -->
-        <div class="segmented-subtabs">
-          <button class="segmented-subtab is-active" data-subtab="browse-matrimonial">Browse Community Profiles</button>
-          <button class="segmented-subtab" data-subtab="my-matrimonial">My Registered Profile</button>
-        </div>
-
-        <!-- Subpane 1: Browse Profiles -->
-        <div id="subpane-browse-matrimonial">
-          <div class="business-filter-bar" id="matrimonial-gender-filters">
-            <button class="category-filter-btn is-active" data-gender="all">All Profiles (4)</button>
-            <button class="category-filter-btn" data-gender="Female">Brides (Kanya)</button>
-            <button class="category-filter-btn" data-gender="Male">Grooms (Yuvak)</button>
-          </div>
-          <div class="matrimonial-grid" id="matrimonial-grid-container"></div>
-        </div>
-
-        <!-- Subpane 2: My Matrimonial Profile -->
-        <div id="subpane-my-matrimonial" hidden>
-          <div class="dash-card" id="my-matrimonial-card"></div>
-        </div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 7: MEMBER DIRECTORY (Section 6)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-directory" role="tabpanel" aria-labelledby="tab-directory" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Community Member Directory</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Search all verified members of Saurashtra Leuva Patel Samaj Vapi chapter.
-            </p>
-          </div>
-        </div>
-
-        <!-- Search and Filter Controls (Section 6.2) -->
-        <div class="directory-filter-row">
-          <div class="form-field">
-            <input type="search" id="dir-search-input" placeholder="Search by name, member ID, or phone…" />
-          </div>
-          <div class="form-field">
-            <select id="dir-filter-city">
-              <option value="all">All Cities / Chapters</option>
-              <option value="Vapi">Vapi</option>
-              <option value="Valsad">Valsad</option>
-              <option value="Surat">Surat</option>
-              <option value="Pardi">Pardi</option>
-              <option value="Ahmedabad">Ahmedabad</option>
-              <option value="Rajkot">Rajkot</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <select id="dir-filter-blood">
-              <option value="all">All Blood Groups</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <select id="dir-filter-gender">
-              <option value="all">All Genders</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Member Table -->
-        <div class="directory-table-wrap">
-          <table class="directory-table">
-            <thead>
-              <tr>
-                <th>Member</th>
-                <th>Member ID</th>
-                <th>Blood Group</th>
-                <th>City / District</th>
-                <th>Occupation</th>
-                <th>Contact</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="directory-table-body"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 8: COMMITTEE MEMBERS (Section 7)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-committee" role="tabpanel" aria-labelledby="tab-committee" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Executive &amp; Managing Committee</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Current office bearers of Saurashtra Leuva Patel Samaj Vapi &amp; Valsad District (Term 2024-2027).
-            </p>
-          </div>
-        </div>
-        <div class="committee-grid" id="committee-grid-container"></div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 9: TRUSTEES (Section 8)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-trustees" role="tabpanel" aria-labelledby="tab-trustees" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Board of Trustees</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Guiding patrons and trustees of the Saurashtra Leuva Patel Samaj Charitable Trust.
-            </p>
-          </div>
-        </div>
-        <div class="committee-grid" id="trustees-grid-container"></div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 10: ANNOUNCEMENTS & EVENTS (Section 9)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-announcements" role="tabpanel" aria-labelledby="tab-announcements" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Announcements &amp; Community Notices</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Official circulars, urgent emergency medical alerts, and community notices.
-            </p>
-          </div>
-          <button class="button button-small button-primary" id="open-post-announcement-modal" type="button">
-            + Post Announcement
-          </button>
-        </div>
-
-        <!-- Priority Filters -->
-        <div class="business-filter-bar" id="announcement-priority-filters">
-          <button class="category-filter-btn is-active" data-prio="all">All Notices (4)</button>
-          <button class="category-filter-btn" data-prio="Urgent">🚨 Urgent Alerts</button>
-          <button class="category-filter-btn" data-prio="Important">⭐ Important Notices</button>
-          <button class="category-filter-btn" data-prio="Normal">Regular Circulars</button>
-        </div>
-
-        <div id="announcements-list-container"></div>
-      </section>
-
-      <!-- ==========================================================
-           TAB PANE 11: DIGITAL SAMAJ ID & QR PASS (Section 12)
-           ========================================================== -->
-      <section class="dash-tab-pane" id="pane-idcard" role="tabpanel" aria-labelledby="tab-idcard" hidden>
-        <div class="section-subhead">
-          <div>
-            <h2 style="font-size:22px; margin:0 0 4px;">Digital Member Identity &amp; QR Pass</h2>
-            <p style="margin:0; font-size:12.5px; color:var(--dash-muted);">
-              Your official Samaj identity credential with dynamic QR verification code.
-            </p>
-          </div>
-        </div>
-
-        <div class="qr-system-view">
-          <!-- Left: High Res QR Card Box -->
-          <div class="qr-card-box">
-            <h3 style="margin:0 0 4px; font-size:17px;">Digital Verification QR</h3>
-            <p style="margin:0 0 16px; font-size:12px; color:var(--dash-muted);">
-              Linked to Member ID: <strong id="qr-pane-member-id">SLPS-2026-1001</strong>
-            </p>
-
-            <div class="qr-code-svg-render" id="main-qr-svg-render"></div>
-
-            <div class="qr-details-strip">
-              <div><span>Holder Name:</span> <strong id="qr-pane-name">Suprince Vijaybhai Kakadiya</strong></div>
-              <div><span>Blood Group:</span> <strong id="qr-pane-blood">B+</strong></div>
-              <div><span>Chapter:</span> <strong>Vapi &amp; Valsad District</strong></div>
-              <div><span>Status:</span> <strong class="text-success">Verified Active Life Member</strong></div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:8px; margin-top:20px;">
-              <button class="button button-small button-primary full-width" id="download-qr-svg-btn" type="button">
-                📥 Download QR Code (SVG)
-              </button>
-              <button class="button button-small button-outline full-width" id="print-official-badge-btn" type="button">
-                🖨️ Print Full Samaj ID Badge
-              </button>
-              <button class="button button-small button-outline full-width" id="copy-qr-link-btn" type="button">
-                🔗 Copy Verification Link
-              </button>
-            </div>
-          </div>
-
-          <!-- Right: Info & Privacy explanation -->
-          <div>
-            <div class="dash-card">
-              <div class="dash-card-header">
-                <h3><span>ℹ️</span> About Digital Samaj QR System</h3>
-              </div>
-              <p style="font-size:13px; color:var(--dash-ink); line-height:1.7;">
-                Every registered member of Saurashtra Leuva Patel Samaj receives an encrypted digital QR identity code. This QR pass is officially recognized for:
-              </p>
-              <ul style="font-size:13px; color:var(--dash-muted); line-height:1.8; padding-left:20px;">
-                <li>Entry verification at Annual Sneha Milan and cultural programs.</li>
-                <li>Priority booking and subsidized rates for Samaj Bhavan AC halls and dining pavilions.</li>
-                <li>Educational merit scholarship application identity verification.</li>
-                <li>Emergency blood donor identification across South Gujarat hospitals.</li>
-              </ul>
-            </div>
-
-            <div class="dash-card demo-credentials-hub">
-              <div class="demo-hub-header">
-                <div class="demo-live-badge">
-                  <span class="demo-live-dot"></span>
-                  <span>Demo Environment Controls</span>
-                </div>
-              </div>
-              <p class="demo-hub-text">
-                Testing this dynamic dashboard? You can reset demo storage to defaults or test the OTP registration flow anytime.
-              </p>
-              <div class="demo-hub-meta">
-                <div><span>Standard Demo Phone:</span> <strong>+91 94081 91506</strong></div>
-                <div><span>Standard Demo OTP:</span> <strong>123456</strong></div>
-              </div>
-              <div class="demo-hub-actions">
-                <button class="button button-small button-outline full-width" id="reset-demo-storage" type="button">
-                  Reset Demo Storage to Defaults ↺
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Dashboard Footer Back Link -->
-      <div class="dashboard-footer-actions">
-        <a class="inline-link dashboard-home-link" href="index.html">
-          ← Return to SLPS Vapi Public Website
-        </a>
-      </div>
-    </main>
-
-    <!-- Loading State -->
-    <main class="dashboard-loading section-wrap" id="dashboard-loading" role="status">
-      <div class="loading-spinner"></div>
-      <p>Loading your verified member account…</p>
-    </main>
-
-    <!-- Error State -->
-    <p class="dashboard-error section-wrap" id="dashboard-error" role="alert" hidden></p>
-
     <!-- ==========================================================
-         MODAL 1: EDIT PROFILE MODAL (Section 1)
+         MODALS & DIALOGS
          ========================================================== -->
+    <!-- Edit Profile Modal -->
     <dialog class="dash-modal" id="modal-edit-profile" aria-labelledby="modal-edit-profile-title">
       <div class="dash-modal-header">
         <h3 id="modal-edit-profile-title">Edit Member Profile</h3>
@@ -1299,9 +1380,7 @@
       </form>
     </dialog>
 
-    <!-- ==========================================================
-         MODAL 2: ADD / EDIT FAMILY MEMBER (Section 2)
-         ========================================================== -->
+    <!-- Add Family Member Modal -->
     <dialog class="dash-modal" id="modal-add-family" aria-labelledby="modal-family-title">
       <div class="dash-modal-header">
         <h3 id="modal-family-title">Add Family Member</h3>
@@ -1406,9 +1485,7 @@
       </form>
     </dialog>
 
-    <!-- ==========================================================
-         MODAL 3: ADD / EDIT BUSINESS (Section 3)
-         ========================================================== -->
+    <!-- Register Business Modal -->
     <dialog class="dash-modal" id="modal-add-business" aria-labelledby="modal-biz-title">
       <div class="dash-modal-header">
         <h3 id="modal-biz-title">Register Business in Directory</h3>
@@ -1489,9 +1566,7 @@
       </form>
     </dialog>
 
-    <!-- ==========================================================
-         MODAL 4: JOB REGISTRATION FORM (Section 4)
-         ========================================================== -->
+    <!-- Job Registration Modal -->
     <dialog class="dash-modal" id="modal-register-job" aria-labelledby="modal-job-title">
       <div class="dash-modal-header">
         <h3 id="modal-job-title">Job &amp; Career Registration</h3>
@@ -1582,9 +1657,7 @@
       </form>
     </dialog>
 
-    <!-- ==========================================================
-         MODAL 5: MATRIMONIAL REGISTRATION (Section 5)
-         ========================================================== -->
+    <!-- Matrimonial Profile Modal -->
     <dialog class="dash-modal" id="modal-register-matrimonial" aria-labelledby="modal-matri-title">
       <div class="dash-modal-header">
         <h3 id="modal-matri-title">Register Matrimonial Profile</h3>
@@ -1716,9 +1789,7 @@
       </form>
     </dialog>
 
-    <!-- ==========================================================
-         MODAL 6: POST ANNOUNCEMENT MODAL (Section 9)
-         ========================================================== -->
+    <!-- Post Announcement Modal -->
     <dialog class="dash-modal" id="modal-post-announcement" aria-labelledby="modal-announce-title">
       <div class="dash-modal-header">
         <h3 id="modal-announce-title">Publish Community Announcement</h3>
@@ -1769,9 +1840,7 @@
       </form>
     </dialog>
 
-    <!-- ==========================================================
-         MODAL 7: VIEW DETAILS UNIVERSAL MODAL
-         ========================================================== -->
+    <!-- Universal View Details Modal -->
     <dialog class="dash-modal" id="modal-view-details" aria-labelledby="modal-view-title">
       <div class="dash-modal-header">
         <h3 id="modal-view-title">Record Details</h3>
@@ -1783,9 +1852,7 @@
       </div>
     </dialog>
 
-    <!-- ==========================================================
-         MODAL 8: QR CODE PREVIEW MODAL (Section 12)
-         ========================================================== -->
+    <!-- QR Code Preview Modal -->
     <dialog class="dash-modal" id="modal-qr-code" aria-labelledby="modal-qr-title">
       <div class="dash-modal-header">
         <h3 id="modal-qr-title">Digital Identity QR Code</h3>
@@ -1803,30 +1870,36 @@
       </div>
     </dialog>
 
+    <!-- ==========================================================
+         MOBILE BOTTOM NAVIGATION BAR (iOS / Android Native Ergonomics)
+         ========================================================== -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Navigation">
+      <button class="mobile-nav-btn is-active" type="button" data-tab="overview">
+        <span class="mobile-nav-icon">📊</span>
+        <span class="mobile-nav-label">Home</span>
+      </button>
+      <button class="mobile-nav-btn" type="button" data-tab="directory">
+        <span class="mobile-nav-icon">👥</span>
+        <span class="mobile-nav-label">Directory</span>
+      </button>
+      <button class="mobile-nav-btn" type="button" data-tab="idcard">
+        <span class="mobile-nav-icon">🪪</span>
+        <span class="mobile-nav-label">ID Pass</span>
+      </button>
+      <button class="mobile-nav-btn" type="button" data-tab="announcements">
+        <span class="mobile-nav-icon">📢</span>
+        <span class="mobile-nav-label">Notices</span>
+      </button>
+      <button class="mobile-nav-btn" type="button" id="mobile-bottom-menu-trigger">
+        <span class="mobile-nav-icon">☰</span>
+        <span class="mobile-nav-label">Menu</span>
+      </button>
+    </nav>
+
     <!-- Toast Notification Component -->
     <div class="dash-toast" id="dash-toast" role="status" aria-live="polite">
       <span class="dash-toast-icon">✓</span>
       <span class="dash-toast-msg">Operation completed successfully.</span>
     </div>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-      <div class="footer-inner section-wrap">
-        <a class="brand footer-brand" href="index.html">
-          <span class="brand-mark" aria-hidden="true">
-            <img class="brand-logo" src="assets/logo.webp" alt="SLPS Logo" />
-          </span>
-          <span class="brand-copy">
-            <strong>SLPS VAPI</strong>
-            <small>Saurashtra Leuva Patel Samaj</small>
-          </span>
-        </a>
-        <p class="footer-tagline">Rooted in heritage. Growing together.</p>
-        <div class="footer-meta">
-          <a class="footer-policy" href="privacy-policy.html">Terms &amp; Policies</a>
-          <span class="footer-copy">© <span id="current-year"></span> SLPS Vapi</span>
-        </div>
-      </div>
-    </footer>
   </body>
 </html>

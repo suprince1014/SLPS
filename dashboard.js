@@ -17,8 +17,9 @@ const DEFAULT_DEMO_MEMBER = {
   blood_group: "B+",
   occupation: "Software Engineer & Community Volunteer",
   qualification: "B.Tech in Computer Science & Engineering",
-  chapter: "Vapi & Valsad District",
+  region: "Vapi & Valsad District",
   membership_type: "Active Life Member",
+  role: "Member",
   joined_date: "14 Jan 2024",
   verified: true,
   avatar: "",
@@ -616,10 +617,10 @@ function setStoredItem(key, data) {
 
 function getActiveMember() {
   const current = getStoredItem("slps_current_user", DEFAULT_DEMO_MEMBER);
-  // Ensure all structured sub-fields exist
   return {
     ...DEFAULT_DEMO_MEMBER,
     ...current,
+    role: current.role || "Member",
     permanent_address: { ...DEFAULT_DEMO_MEMBER.permanent_address, ...(current.permanent_address || {}) },
     native_address: { ...DEFAULT_DEMO_MEMBER.native_address, ...(current.native_address || {}) },
     privacy: { ...DEFAULT_DEMO_MEMBER.privacy, ...(current.privacy || {}) }
@@ -628,7 +629,6 @@ function getActiveMember() {
 
 function saveActiveMember(profile) {
   setStoredItem("slps_current_user", profile);
-  // Also sync in community directory
   const directory = getMembersDirectory();
   const idx = directory.findIndex((m) => m.id === profile.member_id);
   const fullName = [profile.first_name, profile.middle_name, profile.last_name].filter(Boolean).join(" ");
@@ -704,15 +704,7 @@ function saveNotifications(list) {
   setStoredItem("slps_notifications", list);
 }
 
-function getActiveRole() {
-  return localStorage.getItem("slps_active_role") || "member";
-}
-
-function setActiveRole(role) {
-  localStorage.setItem("slps_active_role", role);
-}
-
-// --- PURE JS QR CODE GENERATOR (Compact, zero external dependencies) ---
+// --- PURE JS QR CODE GENERATOR (Offline SVG generator) ---
 function generateQRCodeSVG(text, size = 160) {
   const matrixSize = 25;
   const matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
@@ -727,18 +719,15 @@ function generateQRCodeSVG(text, size = 160) {
     }
   }
 
-  // Draw 3 primary corner finder patterns
   drawFinder(0, 0);
   drawFinder(0, matrixSize - 7);
   drawFinder(matrixSize - 7, 0);
 
-  // Timing patterns
   for (let i = 8; i < matrixSize - 8; i++) {
     matrix[6][i] = i % 2 === 0 ? 1 : 0;
     matrix[i][6] = i % 2 === 0 ? 1 : 0;
   }
 
-  // Alignment pattern
   for (let r = -2; r <= 2; r++) {
     for (let c = -2; c <= 2; c++) {
       if (Math.abs(r) === 2 || Math.abs(c) === 2 || (r === 0 && c === 0)) {
@@ -747,7 +736,6 @@ function generateQRCodeSVG(text, size = 160) {
     }
   }
 
-  // Deterministic content hashing
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
     hash = (hash << 5) - hash + text.charCodeAt(i);
@@ -819,7 +807,7 @@ function formatCurrency(amount) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 }
 
-// --- TAB SWITCHING LOGIC ---
+// --- TAB SWITCHING (LEFT SIDEBAR & MOBILE DRAWER) ---
 function switchTab(tabId) {
   const tabs = document.querySelectorAll(".dash-nav-tab");
   const panes = document.querySelectorAll(".dash-tab-pane");
@@ -830,15 +818,120 @@ function switchTab(tabId) {
     tab.setAttribute("aria-selected", String(isSelected));
   });
 
+  // Sync mobile bottom navigation bar
+  const bottomBtns = document.querySelectorAll(".mobile-nav-btn[data-tab]");
+  bottomBtns.forEach((btn) => {
+    const isSelected = btn.dataset.tab === tabId;
+    btn.classList.toggle("is-active", isSelected);
+    btn.setAttribute("aria-selected", String(isSelected));
+  });
+
   panes.forEach((pane) => {
     const isTarget = pane.id === `pane-${tabId}`;
     pane.hidden = !isTarget;
   });
 
+  // Close mobile sidebar drawer if open
+  const sidebar = document.querySelector("#dash-sidebar");
+  const overlay = document.querySelector("#sidebar-overlay");
+  if (sidebar && sidebar.classList.contains("sidebar-open")) {
+    sidebar.classList.remove("sidebar-open");
+    if (overlay) overlay.classList.remove("is-active");
+  }
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// --- DASHBOARD RENDERING ENGINE ---
+// --- 1. TOP ANNOUNCEMENT CAROUSEL CONTROLLER (Above the Navbar) ---
+let currentCarouselIndex = 0;
+let carouselTimer = null;
+
+function initAnnouncementCarousel(announcementsList) {
+  const track = document.querySelector("#carousel-slider-track");
+  const counter = document.querySelector("#carousel-counter");
+  const prevBtn = document.querySelector("#carousel-prev-btn");
+  const nextBtn = document.querySelector("#carousel-next-btn");
+  const alertLabel = document.querySelector("#top-alert-label");
+  const alertPill = document.querySelector("#top-alert-pill");
+
+  if (!track || announcementsList.length === 0) return;
+
+  // Build slides from actual community announcements
+  track.innerHTML = announcementsList
+    .map((a, idx) => {
+      const isUrgent = a.priority === "Urgent";
+      const icon = isUrgent ? "🚨" : a.priority === "Important" ? "⭐" : "📢";
+      return `
+      <div class="carousel-slide-item ${idx === 0 ? "is-active" : ""}" data-index="${idx}" data-priority="${a.priority}" data-jump-tab="announcements">
+        <span class="slide-content-text">
+          ${icon} <strong>${a.title}:</strong> ${a.description.substring(0, 115)}…
+        </span>
+        <span class="slide-action-link">View Details →</span>
+      </div>
+    `;
+    })
+    .join("");
+
+  const slides = track.querySelectorAll(".carousel-slide-item");
+  const total = slides.length;
+
+  function showSlide(index) {
+    if (total === 0) return;
+    currentCarouselIndex = (index + total) % total;
+
+    slides.forEach((slide, idx) => {
+      slide.classList.toggle("is-active", idx === currentCarouselIndex);
+    });
+
+    if (counter) counter.textContent = `${currentCarouselIndex + 1} / ${total}`;
+
+    const activeSlide = slides[currentCarouselIndex];
+    const priority = activeSlide ? activeSlide.dataset.priority : "Normal";
+    if (alertLabel && alertPill) {
+      if (priority === "Urgent") {
+        alertLabel.textContent = "Urgent Alert";
+        alertPill.style.background = "var(--dash-danger)";
+      } else if (priority === "Important") {
+        alertLabel.textContent = "Important Notice";
+        alertPill.style.background = "var(--dash-terracotta)";
+      } else {
+        alertLabel.textContent = "Community Notice";
+        alertPill.style.background = "var(--dash-green-dark)";
+      }
+    }
+  }
+
+  function nextSlide() {
+    showSlide(currentCarouselIndex + 1);
+  }
+
+  function prevSlide() {
+    showSlide(currentCarouselIndex - 1);
+  }
+
+  if (nextBtn) nextBtn.onclick = () => { nextSlide(); resetTimer(); };
+  if (prevBtn) prevBtn.onclick = () => { prevSlide(); resetTimer(); };
+
+  function resetTimer() {
+    clearInterval(carouselTimer);
+    carouselTimer = setInterval(nextSlide, 5500);
+  }
+
+  resetTimer();
+
+  // Pause on hover
+  track.onmouseenter = () => clearInterval(carouselTimer);
+  track.onmouseleave = () => resetTimer();
+
+  // Slide click jump
+  slides.forEach((slide) => {
+    slide.onclick = () => {
+      switchTab("announcements");
+    };
+  });
+}
+
+// --- 2. MAIN DASHBOARD RENDERER ---
 function renderDashboard() {
   const member = getActiveMember();
   const familyList = getFamilyMembers();
@@ -848,26 +941,43 @@ function renderDashboard() {
   const directoryList = getMembersDirectory();
   const announcementsList = getAnnouncements();
   const notificationsList = getNotifications();
-  const activeRole = getActiveRole();
 
   const fullName = [member.first_name, member.middle_name, member.last_name].filter(Boolean).join(" ");
   const initials = getInitials(fullName);
   const age = calculateAge(member.date_of_birth);
 
-  // 1. Header Profile & Role
+  // 1. Sidebar Brand & User Card
+  const sidebarAvatar = document.querySelector("#sidebar-avatar");
+  const sidebarUserName = document.querySelector("#sidebar-user-name");
+  const sidebarUserId = document.querySelector("#sidebar-user-id");
+
+  if (sidebarAvatar) {
+    if (member.avatar) sidebarAvatar.innerHTML = `<img src="${member.avatar}" alt="${fullName}" />`;
+    else sidebarAvatar.textContent = initials;
+  }
+  if (sidebarUserName) sidebarUserName.textContent = fullName;
+  if (sidebarUserId) sidebarUserId.textContent = member.member_id;
+
+  // 2. Header Elements: User Chip & READ-ONLY ROLE BADGE
   const headerAvatar = document.querySelector("#header-avatar");
   const headerUserName = document.querySelector("#header-user-name");
   const headerUserId = document.querySelector("#header-user-id");
-  const roleSelect = document.querySelector("#role-switcher");
+  const currentRoleName = document.querySelector("#current-role-name");
   const adminBanner = document.querySelector("#admin-mode-banner");
 
-  if (headerAvatar) headerAvatar.textContent = initials;
+  if (headerAvatar) {
+    if (member.avatar) headerAvatar.innerHTML = `<img src="${member.avatar}" alt="${fullName}" />`;
+    else headerAvatar.textContent = initials;
+  }
   if (headerUserName) headerUserName.textContent = fullName;
   if (headerUserId) headerUserId.textContent = member.member_id;
-  if (roleSelect) roleSelect.value = activeRole;
-  if (adminBanner) adminBanner.hidden = activeRole !== "admin";
 
-  // 2. Tab Badge Counters
+  // Read-only role display (Managed by admin)
+  const roleDisplay = member.role || "Member";
+  if (currentRoleName) currentRoleName.textContent = roleDisplay;
+  if (adminBanner) adminBanner.hidden = !(roleDisplay.toLowerCase().includes("admin"));
+
+  // 3. Tab Badge Counters in Left Sidebar
   const tabFamCount = document.querySelector("#tab-family-count");
   const tabBizCount = document.querySelector("#tab-business-count");
   const tabJobCount = document.querySelector("#tab-job-count");
@@ -882,7 +992,7 @@ function renderDashboard() {
   if (tabDirCount) tabDirCount.textContent = directoryList.length;
   if (tabAnnCount) tabAnnCount.textContent = announcementsList.length;
 
-  // 3. Overview Welcome & KPIs
+  // 4. Overview Welcome & KPIs
   const memberDisplay = document.querySelector("#member-display-name");
   if (memberDisplay) memberDisplay.textContent = `${member.first_name || "Member"}.`;
 
@@ -900,35 +1010,19 @@ function renderDashboard() {
   if (kpiMatri) kpiMatri.textContent = matrimonialList.length;
   if (kpiBlood) kpiBlood.textContent = directoryList.filter((m) => m.blood).length;
 
-  // 4. Urgent Ticker
-  const urgentAnn = announcementsList.find((a) => a.priority === "Urgent");
-  const urgentTicker = document.querySelector("#dash-urgent-ticker");
-  const urgentText = document.querySelector("#urgent-ticker-text");
-  if (urgentTicker && urgentText) {
-    if (urgentAnn) {
-      urgentTicker.hidden = false;
-      urgentText.textContent = `${urgentAnn.title}: ${urgentAnn.description.substring(0, 110)}…`;
-      urgentTicker.onclick = () => {
-        switchTab("announcements");
-      };
-    } else {
-      urgentTicker.hidden = true;
-    }
-  }
-
   // 5. Digital Samaj ID Card Elements
   const idAvatar = document.querySelector("#id-avatar-box");
   const cardName = document.querySelector("#card-member-name");
   const cardId = document.querySelector("#card-member-id");
   const cardBlood = document.querySelector("#card-blood-group");
-  const cardChapter = document.querySelector("#card-chapter");
+  const cardRegion = document.querySelector("#card-region");
   const cardQrRender = document.querySelector("#card-qr-render");
 
   if (idAvatar) idAvatar.textContent = initials;
   if (cardName) cardName.textContent = fullName;
   if (cardId) cardId.textContent = member.member_id;
   if (cardBlood) cardBlood.textContent = member.blood_group || "B+";
-  if (cardChapter) cardChapter.textContent = member.chapter;
+  if (cardRegion) cardRegion.textContent = member.region || "Vapi & Valsad District";
   if (cardQrRender) {
     cardQrRender.innerHTML = generateQRCodeSVG(
       `https://slpsvapi.org/verify?id=${encodeURIComponent(member.member_id)}`,
@@ -936,10 +1030,13 @@ function renderDashboard() {
     );
   }
 
-  // 6. Notifications Panel Render
+  // 6. Top Announcement Carousel
+  initAnnouncementCarousel(announcementsList);
+
+  // 7. Render Notifications Dropdown
   renderNotifications(notificationsList);
 
-  // 7. Render Sub-Modules
+  // 8. Render Sub-Modules
   renderProfileSection(member, fullName, initials, age);
   renderFamilySection(familyList);
   renderBusinessSection(businessList);
@@ -1005,26 +1102,23 @@ function renderProfileSection(member, fullName, initials, age) {
   const cardRole = document.querySelector("#profile-card-role");
   const statId = document.querySelector("#stat-member-id");
   const statPhone = document.querySelector("#stat-phone");
-  const statChapter = document.querySelector("#stat-chapter");
+  const statRegion = document.querySelector("#stat-region");
   const statBlood = document.querySelector("#stat-blood-group");
   const statJoined = document.querySelector("#stat-joined-date");
 
   if (largeAvatar) {
-    if (member.avatar) {
-      largeAvatar.innerHTML = `<img src="${member.avatar}" alt="${fullName}" />`;
-    } else {
-      largeAvatar.textContent = initials;
-    }
+    if (member.avatar) largeAvatar.innerHTML = `<img src="${member.avatar}" alt="${fullName}" />`;
+    else largeAvatar.textContent = initials;
   }
   if (cardName) cardName.textContent = fullName;
   if (cardRole) cardRole.textContent = `${member.occupation || "Member"} • Verified`;
   if (statId) statId.textContent = member.member_id;
   if (statPhone) statPhone.textContent = member.phone;
-  if (statChapter) statChapter.textContent = member.chapter;
+  if (statRegion) statRegion.textContent = member.region || "Vapi & Valsad";
   if (statBlood) statBlood.textContent = member.blood_group || "B+";
   if (statJoined) statJoined.textContent = member.joined_date;
 
-  // 1.1 Personal info dl
+  // Personal Information
   const pName = document.querySelector("#profile-name");
   const pPhone = document.querySelector("#profile-phone");
   const pEmail = document.querySelector("#profile-email");
@@ -1045,7 +1139,7 @@ function renderProfileSection(member, fullName, initials, age) {
   if (pOcc) pOcc.textContent = member.occupation || "—";
   if (pQual) pQual.textContent = member.qualification || "—";
 
-  // 1.2 Permanent Address
+  // Permanent Address
   const pHouse = document.querySelector("#profile-perm-house");
   const pStreet = document.querySelector("#profile-perm-street");
   const pCity = document.querySelector("#profile-perm-city");
@@ -1067,7 +1161,7 @@ function renderProfileSection(member, fullName, initials, age) {
       .join(", ");
   }
 
-  // 1.3 Native Address
+  // Native Address
   const nat = member.native_address || {};
   const nPlace = document.querySelector("#profile-native");
   const nStreet = document.querySelector("#profile-native-street");
@@ -1131,7 +1225,6 @@ function renderFamilySection(familyList) {
     )
     .join("");
 
-  // Bind Family Actions
   container.querySelectorAll(".view-family-qr-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const idx = Number(btn.dataset.idx);
@@ -1167,8 +1260,7 @@ function renderFamilySection(familyList) {
 
   container.querySelectorAll(".edit-family-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const idx = Number(btn.dataset.idx);
-      openFamilyModal(idx);
+      openFamilyModal(Number(btn.dataset.idx));
     });
   });
 
@@ -1203,7 +1295,7 @@ function renderBusinessSection(businessList, filterCategory = "all") {
 
   container.innerHTML = filtered
     .map(
-      (b, idx) => `
+      (b) => `
     <div class="business-card ${b.is_own ? "is-own-business" : ""}">
       <div class="business-header">
         <div class="business-logo-title">
@@ -1244,11 +1336,8 @@ function renderBusinessSection(businessList, filterCategory = "all") {
     )
     .join("");
 
-  // Bind Business Actions
   container.querySelectorAll(".edit-biz-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      openBusinessModal(btn.dataset.id);
-    });
+    btn.addEventListener("click", () => openBusinessModal(btn.dataset.id));
   });
 
   container.querySelectorAll(".qr-biz-btn").forEach((btn) => {
@@ -1337,7 +1426,6 @@ function renderJobSection(jobList, member) {
     }
   }
 
-  // Talent Directory
   const container = document.querySelector("#job-directory-container");
   if (!container) return;
 
@@ -1458,7 +1546,6 @@ function renderMatrimonialSection(matrimonialList) {
     });
   });
 
-  // Render My Matrimonial Subpane
   const ownMatri = matrimonialList.find((m) => m.is_own) || matrimonialList[0];
   if (myCard && ownMatri) {
     myCard.innerHTML = `
@@ -1482,9 +1569,7 @@ function renderMatrimonialSection(matrimonialList) {
     `;
     const editBtn = myCard.querySelector("#edit-my-matrimonial-btn");
     if (editBtn) {
-      editBtn.addEventListener("click", () => {
-        openMatrimonialModal();
-      });
+      editBtn.addEventListener("click", () => openMatrimonialModal());
     }
   }
 }
@@ -1519,7 +1604,7 @@ function renderDirectorySection(directoryList) {
 
   tbody.innerHTML = filtered
     .map(
-      (m, idx) => `
+      (m) => `
     <tr>
       <td>
         <div class="member-cell">
@@ -1559,7 +1644,7 @@ function renderDirectorySection(directoryList) {
             </div>
           </div>
           <p><strong>Blood Group:</strong> ${m.blood || "—"}</p>
-          <p><strong>City / Chapter:</strong> ${m.city}, ${m.district || "Valsad"}</p>
+          <p><strong>City / District:</strong> ${m.city}, ${m.district || "Valsad"}</p>
           <p><strong>Occupation:</strong> ${m.occupation || "—"}</p>
           <p><strong>Mobile Number:</strong> ${m.phone || "—"}</p>
           <p><strong>Verification Status:</strong> <span class="text-success">Official Verified Member ✓</span></p>
@@ -1694,7 +1779,6 @@ function renderAnnouncementsSection(announcementsList, filterPriority = "all") {
 }
 
 function renderOverviewLists(announcementsList, businessList) {
-  // 1. Overview Announcements list
   const annContainer = document.querySelector("#overview-announcements-list");
   if (annContainer) {
     const top3 = announcementsList.slice(0, 3);
@@ -1716,7 +1800,6 @@ function renderOverviewLists(announcementsList, businessList) {
       .join("");
   }
 
-  // 2. Overview Businesses list
   const bizContainer = document.querySelector("#overview-businesses-list");
   if (bizContainer) {
     const top3Biz = businessList.slice(0, 3);
@@ -1983,9 +2066,15 @@ function handleGlobalSearch(query) {
   });
 }
 
+// --- LOGOUT / SIGN OUT HANDLER ---
+function handleSignOut() {
+  localStorage.removeItem("slps_current_user");
+  window.location.replace("index.html");
+}
+
 // --- EVENT LISTENERS INITIALIZATION ---
 function initEventListeners() {
-  // 1. Navigation Tab Switching
+  // 1. Navigation Tab Switching in Left Sidebar
   document.querySelectorAll(".dash-nav-tab").forEach((btn) => {
     btn.addEventListener("click", () => {
       switchTab(btn.dataset.tab);
@@ -2000,19 +2089,49 @@ function initEventListeners() {
     }
   });
 
-  // 2. Role Switcher
-  const roleSelect = document.querySelector("#role-switcher");
-  if (roleSelect) {
-    roleSelect.addEventListener("change", (e) => {
-      const role = e.target.value;
-      setActiveRole(role);
-      const adminBanner = document.querySelector("#admin-mode-banner");
-      if (adminBanner) adminBanner.hidden = role !== "admin";
-      showToast(`Role switched to: ${role.toUpperCase()}`);
+  // Mobile sidebar drawer toggles
+  const mobileToggle = document.querySelector("#mobile-sidebar-toggle");
+  const sidebarCloseBtn = document.querySelector("#sidebar-close-btn");
+  const mobileBottomMenu = document.querySelector("#mobile-bottom-menu-trigger");
+  const sidebar = document.querySelector("#dash-sidebar");
+  const overlay = document.querySelector("#sidebar-overlay");
+
+  if (mobileToggle && sidebar) {
+    mobileToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("sidebar-open");
+      if (overlay) overlay.classList.toggle("is-active");
     });
   }
 
-  // 3. Notifications Toggle
+  if (sidebarCloseBtn && sidebar) {
+    sidebarCloseBtn.addEventListener("click", () => {
+      sidebar.classList.remove("sidebar-open");
+      if (overlay) overlay.classList.remove("is-active");
+    });
+  }
+
+  if (mobileBottomMenu && sidebar) {
+    mobileBottomMenu.addEventListener("click", () => {
+      sidebar.classList.add("sidebar-open");
+      if (overlay) overlay.classList.add("is-active");
+    });
+  }
+
+  if (overlay && sidebar) {
+    overlay.addEventListener("click", () => {
+      sidebar.classList.remove("sidebar-open");
+      overlay.classList.remove("is-active");
+    });
+  }
+
+  // Mobile Bottom Navigation Bar button taps
+  document.querySelectorAll(".mobile-nav-btn[data-tab]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  // 2. Notifications Toggle
   const notifBtn = document.querySelector("#notif-toggle-btn");
   const notifDropdown = document.querySelector("#notif-dropdown");
   if (notifBtn && notifDropdown) {
@@ -2038,7 +2157,7 @@ function initEventListeners() {
     });
   }
 
-  // 4. Global Search Input
+  // 3. Global Search Input
   const searchInput = document.querySelector("#global-search-input");
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
@@ -2053,7 +2172,7 @@ function initEventListeners() {
     });
   }
 
-  // 5. Close Modals
+  // 4. Close Modals
   document.querySelectorAll("[data-close-modal]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const modal = btn.closest("dialog");
@@ -2061,7 +2180,7 @@ function initEventListeners() {
     });
   });
 
-  // 6. Profile Editing Handlers
+  // 5. Profile Editing Handlers
   const openEditProfileBtn = document.querySelector("#open-edit-profile-modal");
   const editProfileModal = document.querySelector("#modal-edit-profile");
   const editProfileForm = document.querySelector("#form-edit-profile");
@@ -2151,7 +2270,7 @@ function initEventListeners() {
     });
   }
 
-  // Photo Upload Handler (with base64 simulation)
+  // Photo Upload Handler (base64 preview)
   const photoUploadInput = document.querySelector("#profile-photo-upload");
   if (photoUploadInput) {
     photoUploadInput.addEventListener("change", (e) => {
@@ -2170,14 +2289,12 @@ function initEventListeners() {
     });
   }
 
-  // 7. Family Modal Submit
+  // 6. Family Form Handlers
   const familyForm = document.querySelector("#form-family-member");
   const familyModal = document.querySelector("#modal-add-family");
   const openAddFamBtn = document.querySelector("#open-add-family-modal");
 
-  if (openAddFamBtn) {
-    openAddFamBtn.addEventListener("click", () => openFamilyModal());
-  }
+  if (openAddFamBtn) openAddFamBtn.addEventListener("click", () => openFamilyModal());
 
   if (familyForm && familyModal) {
     familyForm.addEventListener("submit", (e) => {
@@ -2215,14 +2332,12 @@ function initEventListeners() {
     });
   }
 
-  // 8. Business Form & Category Filters
+  // 7. Business Form & Category Filters
   const bizForm = document.querySelector("#form-business");
   const bizModal = document.querySelector("#modal-add-business");
   const openAddBizBtn = document.querySelector("#open-add-business-modal");
 
-  if (openAddBizBtn) {
-    openAddBizBtn.addEventListener("click", () => openBusinessModal());
-  }
+  if (openAddBizBtn) openAddBizBtn.addEventListener("click", () => openBusinessModal());
 
   if (bizForm && bizModal) {
     bizForm.addEventListener("submit", (e) => {
@@ -2261,7 +2376,6 @@ function initEventListeners() {
     });
   }
 
-  // Business Category Filter Pills
   document.querySelectorAll("#business-category-filters .category-filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll("#business-category-filters .category-filter-btn").forEach((b) => b.classList.remove("is-active"));
@@ -2270,7 +2384,7 @@ function initEventListeners() {
     });
   });
 
-  // 9. Job Portal Subtabs & Form
+  // 8. Job Portal Subtabs & Modal
   document.querySelectorAll(".segmented-subtabs .segmented-subtab").forEach((tab) => {
     tab.addEventListener("click", () => {
       const container = tab.closest(".dash-tab-pane");
@@ -2338,10 +2452,7 @@ function initEventListeners() {
         position: String(fd.get("position") || "").trim(),
         location: String(fd.get("location") || "").trim(),
         salary: Number(fd.get("salary")) || 850000,
-        skills: String(fd.get("skills") || "")
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
+        skills: String(fd.get("skills") || "").split(",").map((s) => s.trim()).filter(Boolean),
         resume: "Suprince_Kakadiya_Resume.pdf",
         is_own: true
       };
@@ -2357,7 +2468,6 @@ function initEventListeners() {
     });
   }
 
-  // Simulated Resume Download
   const dlResumeBtn = document.querySelector("#download-my-resume-btn");
   if (dlResumeBtn) {
     dlResumeBtn.addEventListener("click", () => {
@@ -2365,14 +2475,12 @@ function initEventListeners() {
     });
   }
 
-  // 10. Matrimonial Form & Filters
+  // 9. Matrimonial Form & Filters
   const openMatriBtn = document.querySelector("#open-register-matrimonial-modal");
   const matriForm = document.querySelector("#form-matrimonial-profile");
   const matriModal = document.querySelector("#modal-register-matrimonial");
 
-  if (openMatriBtn) {
-    openMatriBtn.addEventListener("click", () => openMatrimonialModal());
-  }
+  if (openMatriBtn) openMatriBtn.addEventListener("click", () => openMatrimonialModal());
 
   if (matriForm && matriModal) {
     matriForm.addEventListener("submit", (e) => {
@@ -2419,7 +2527,6 @@ function initEventListeners() {
     });
   }
 
-  // Matrimonial Gender Filter
   document.querySelectorAll("#matrimonial-gender-filters .category-filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll("#matrimonial-gender-filters .category-filter-btn").forEach((b) => b.classList.remove("is-active"));
@@ -2431,7 +2538,7 @@ function initEventListeners() {
     });
   });
 
-  // 11. Directory Filter Listeners
+  // 10. Directory Filter Listeners
   const dirSearch = document.querySelector("#dir-search-input");
   const dirCity = document.querySelector("#dir-filter-city");
   const dirBlood = document.querySelector("#dir-filter-blood");
@@ -2439,16 +2546,11 @@ function initEventListeners() {
 
   [dirSearch, dirCity, dirBlood, dirGender].forEach((el) => {
     if (el) {
-      el.addEventListener("input", () => {
-        renderDirectorySection(getMembersDirectory());
-      });
-      el.addEventListener("change", () => {
-        renderDirectorySection(getMembersDirectory());
-      });
+      el.addEventListener("input", () => renderDirectorySection(getMembersDirectory()));
+      el.addEventListener("change", () => renderDirectorySection(getMembersDirectory()));
     }
   });
 
-  // Emergency Blood Pills
   document.querySelectorAll("#emergency-blood-pills .blood-pill").forEach((pill) => {
     pill.addEventListener("click", () => {
       document.querySelectorAll("#emergency-blood-pills .blood-pill").forEach((p) => p.classList.remove("is-active"));
@@ -2462,19 +2564,13 @@ function initEventListeners() {
     });
   });
 
-  // 12. Announcements Form & Admin Actions
+  // 11. Announcements Form & Admin Actions
   const openAnnModalBtn = document.querySelector("#open-post-announcement-modal");
   const adminAddAnnBtn = document.querySelector("#admin-add-announcement-btn");
   const annModal = document.querySelector("#modal-post-announcement");
   const annForm = document.querySelector("#form-announcement");
 
   function openAnnouncementModal() {
-    if (getActiveRole() !== "admin") {
-      setActiveRole("admin");
-      document.querySelector("#role-switcher").value = "admin";
-      document.querySelector("#admin-mode-banner").hidden = false;
-      showToast("Admin privileges activated for announcement publishing.");
-    }
     if (annModal && !annModal.open) annModal.showModal();
   }
 
@@ -2506,7 +2602,6 @@ function initEventListeners() {
     });
   }
 
-  // Announcement Priority Filters
   document.querySelectorAll("#announcement-priority-filters .category-filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll("#announcement-priority-filters .category-filter-btn").forEach((b) => b.classList.remove("is-active"));
@@ -2515,7 +2610,7 @@ function initEventListeners() {
     });
   });
 
-  // 13. ID Pass & Print Utilities
+  // 12. ID Pass & Print Utilities
   function handlePrint() {
     window.print();
   }
@@ -2530,7 +2625,6 @@ function initEventListeners() {
     if (btn) btn.addEventListener("click", handlePrint);
   });
 
-  // Copy Member ID
   const copyIdBtn = document.querySelector("#copy-member-id");
   if (copyIdBtn) {
     copyIdBtn.addEventListener("click", () => {
@@ -2544,7 +2638,6 @@ function initEventListeners() {
     });
   }
 
-  // Copy QR Link
   const copyQrLinkBtn = document.querySelector("#copy-qr-link-btn");
   if (copyQrLinkBtn) {
     copyQrLinkBtn.addEventListener("click", () => {
@@ -2558,7 +2651,6 @@ function initEventListeners() {
     });
   }
 
-  // Download SVG QR Code
   const downloadQrBtn = document.querySelector("#download-qr-svg-btn");
   if (downloadQrBtn) {
     downloadQrBtn.addEventListener("click", () => {
@@ -2577,7 +2669,6 @@ function initEventListeners() {
     });
   }
 
-  // Quick View QR
   const quickQrBtn = document.querySelector("#quick-view-qr-btn");
   const viewProfQrBtn = document.querySelector("#view-profile-qr-btn");
   [quickQrBtn, viewProfQrBtn].forEach((btn) => {
@@ -2590,7 +2681,6 @@ function initEventListeners() {
     }
   });
 
-  // Modal QR Download Button
   const modalQrDlBtn = document.querySelector("#modal-qr-download-btn");
   if (modalQrDlBtn) {
     modalQrDlBtn.addEventListener("click", () => {
@@ -2598,7 +2688,7 @@ function initEventListeners() {
     });
   }
 
-  // 14. Event RSVP Toggles
+  // 13. Event RSVP Toggles
   document.querySelectorAll(".rsvp-toggle").forEach((btn) => {
     btn.addEventListener("click", () => {
       const isConfirmed = btn.classList.contains("button-primary");
@@ -2616,7 +2706,7 @@ function initEventListeners() {
     });
   });
 
-  // 15. Reset Demo Storage
+  // 14. Reset Demo Storage
   const resetDemoBtn = document.querySelector("#reset-demo-storage");
   if (resetDemoBtn) {
     resetDemoBtn.addEventListener("click", () => {
@@ -2630,21 +2720,17 @@ function initEventListeners() {
         localStorage.setItem("slps_members_directory", JSON.stringify(INITIAL_MEMBERS_DIRECTORY));
         localStorage.setItem("slps_announcements", JSON.stringify(INITIAL_ANNOUNCEMENTS));
         localStorage.setItem("slps_notifications", JSON.stringify(INITIAL_NOTIFICATIONS));
-        localStorage.setItem("slps_active_role", "member");
         renderDashboard();
         showToast("Demo storage restored to defaults.");
       }
     });
   }
 
-  // 16. Sign Out
+  // 15. Sign Out Handlers (Top bar and sidebar buttons directly redirect to website)
   const signOutBtn = document.querySelector("#sign-out");
-  if (signOutBtn) {
-    signOutBtn.addEventListener("click", () => {
-      localStorage.removeItem("slps_current_user");
-      window.location.replace("index.html");
-    });
-  }
+  const sidebarSignOutBtn = document.querySelector("#sidebar-sign-out-btn");
+  if (signOutBtn) signOutBtn.addEventListener("click", handleSignOut);
+  if (sidebarSignOutBtn) sidebarSignOutBtn.addEventListener("click", handleSignOut);
 }
 
 // --- BOOTSTRAP ---
@@ -2652,7 +2738,6 @@ try {
   initEventListeners();
   renderDashboard();
 
-  // Handle URL hash or tab parameter (e.g. ?tab=business)
   const urlParams = new URLSearchParams(window.location.search);
   const requestedTab = urlParams.get("tab");
   if (requestedTab) {
