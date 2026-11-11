@@ -147,6 +147,14 @@ document.querySelectorAll("[data-open-auth]").forEach((button) => {
     document.body.classList.add("dialog-open");
   });
 });
+
+if (window.location.search.includes("auth=true")) {
+  if (authDialog && !authDialog.open) {
+    authDialog.showModal();
+    document.body.classList.add("dialog-open");
+  }
+}
+
 document.querySelector(".dialog-close").addEventListener("click", () => authDialog.close());
 authDialog.addEventListener("click", (event) => {
   if (event.target === authDialog) authDialog.close();

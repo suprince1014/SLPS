@@ -246,6 +246,33 @@
         <button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-auth-mode="login">Member login</button>
         <button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-mode="register">Register</button>
       </div>
+
+      <div class="demo-auth-banner" id="demo-banner-login">
+        <div class="demo-auth-badge">
+          <span class="demo-dot"></span>
+          <span>DEMO CREDENTIALS</span>
+        </div>
+        <div class="demo-auth-info">
+          <span>Registered Mobile: <strong>+91 94081 91506</strong> &bull; OTP: <strong>123456</strong></span>
+        </div>
+        <button type="button" class="demo-chip-button" id="demo-fill-login">
+          ⚡ 1-Click Auto Fill
+        </button>
+      </div>
+
+      <div class="demo-auth-banner" id="demo-banner-register" hidden>
+        <div class="demo-auth-badge">
+          <span class="demo-dot"></span>
+          <span>QUICK DEMO REGISTRATION</span>
+        </div>
+        <div class="demo-auth-info">
+          <span>Test registration with pre-filled Suprince Kakadiya member details</span>
+        </div>
+        <button type="button" class="demo-chip-button" id="demo-fill-register">
+          ⚡ Pre-fill Sample Member
+        </button>
+      </div>
+
       <form class="auth-form registration-form" id="registration-form" novalidate>
         <div class="registration-fields">
           <div class="name-fields">
@@ -264,7 +291,7 @@
           </div>
           <div class="form-field phone-field">
             <label for="member-phone">Mobile number</label>
-            <input id="member-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210" maxlength="20" required />
+            <input id="member-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 94081 91506" maxlength="20" required />
             <small>Enter your number with country code.</small>
           </div>
           <div class="form-field">
@@ -290,30 +317,70 @@
       <form class="auth-form login-form" id="login-form" hidden novalidate>
         <div class="form-field phone-field">
           <label for="login-phone">Mobile number</label>
-          <input id="login-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210" maxlength="20" required />
+          <input id="login-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 94081 91506" maxlength="20" required />
           <small>Enter the mobile number used for your membership.</small>
         </div>
         <button class="button button-primary auth-submit" type="submit">Send sign-in code <span aria-hidden="true">↗</span></button>
       </form>
       <form class="auth-form otp-form" id="otp-form" hidden novalidate>
-        <div class="form-field">
-          <label for="otp-code">6-digit verification code</label>
-          <input id="otp-code" name="token" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required />
-          <small id="otp-sent-message">We sent a code to your mobile number. It expires in 10 minutes.</small>
+        <!-- Demo OTP Quick Verification Box -->
+        <div class="demo-otp-card" id="demo-otp-card">
+          <div class="demo-otp-card-top">
+            <div class="demo-badge-pill">
+              <span class="demo-live-dot"></span>
+              <span>DEMO OTP ACTIVE</span>
+            </div>
+            <span class="demo-otp-expiry">Expires in 10 min</span>
+          </div>
+          <div class="demo-otp-code-row">
+            <div class="demo-otp-display">
+              <span class="demo-otp-label-small">YOUR TEST CODE</span>
+              <span class="demo-otp-digits" id="demo-active-otp">123456</span>
+            </div>
+            <button type="button" class="demo-autofill-btn" id="demo-autofill-otp" aria-label="Auto-fill demo code">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Auto-fill OTP</span>
+            </button>
+          </div>
+          <p class="demo-otp-note">Click "Auto-fill OTP" or type either the code above or standard demo code <strong>123456</strong>.</p>
         </div>
-        <button class="button button-primary auth-submit" id="verify-otp" type="submit">Verify code <span aria-hidden="true">↗</span></button>
+
+        <div class="form-field otp-input-wrapper">
+          <label for="otp-code">Enter 6-digit verification code</label>
+          <input id="otp-code" name="token" class="otp-number-input" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="• • • • • •" required />
+          <small id="otp-sent-message">We sent a verification code to your mobile number.</small>
+        </div>
+        <button class="button button-primary auth-submit" id="verify-otp" type="submit">Verify &amp; Continue <span aria-hidden="true">↗</span></button>
         <div class="otp-actions">
           <button class="text-button" id="resend-otp" type="button" disabled>Resend code in 60s</button>
           <button class="text-button" id="change-phone" type="button">Change number</button>
         </div>
       </form>
       <section class="auth-success" id="auth-success" aria-live="polite" hidden>
-        <div class="success-check" aria-hidden="true">
-          <svg viewBox="0 0 52 52"><path d="M14 27.5 22 35l16-18" /></svg>
+        <div class="success-icon-wrap" aria-hidden="true">
+          <div class="success-ring-glow"></div>
+          <div class="success-ring-pulse"></div>
+          <div class="success-check-circle">
+            <svg class="success-svg" viewBox="0 0 52 52">
+              <circle class="success-svg-circle" cx="26" cy="26" r="23" fill="none" />
+              <path class="success-svg-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+            </svg>
+          </div>
         </div>
-        <h3>You're all set.</h3>
-        <p>Your mobile number is verified and your member account is ready.</p>
-        <a class="button button-primary auth-submit" href="dashboard.html">Go to dashboard <span aria-hidden="true">↗</span></a>
+        <h3 id="auth-success-title">Verified Successfully!</h3>
+        <p id="auth-success-desc">Welcome to SLPS Vapi. Your mobile number has been authenticated.</p>
+        <div class="redirect-countdown-card">
+          <div class="redirect-text">
+            <span>Redirecting to your dashboard…</span>
+            <span class="redirect-spinner"></span>
+          </div>
+          <div class="redirect-bar-track">
+            <div class="redirect-bar-fill" id="redirect-bar-fill"></div>
+          </div>
+        </div>
+        <a class="button button-primary auth-submit redirect-button" id="go-dashboard-btn" href="dashboard.html">
+          Go to dashboard now <span aria-hidden="true">↗</span>
+        </a>
       </section>
       <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
       <a class="auth-email" href="mailto:slpsvapi@gmail.com?subject=SLPS%20Vapi%20membership">Need help? Contact slpsvapi@gmail.com</a>
