@@ -1,20 +1,15 @@
-now moving forward to biggest step of the website the login/register process and making up the dashboard 
+the management part 
+things that are manageable by the admin and on the user page will be only viisble like the notices are only visible for the user but they can make a notice or edit or delete the notices
 
-create on going boarding system registration process starting from the name 
+first things is user can only view the notices and alert they cannot change delete or add the notices on the panel 
 
-first middle last name 
-phone number 
-email 
-date of birth 
-gender 
+users cannot delete any of the users on the members directory or the trusteee or any other user 
 
-after filling up the registration process will lead for the otp verification 
-we needed a phone number otp system like the verification will be done through the phone number ( sms system ) and the otp will be validate for 10 mints and it can be resend in 1 minute if not came or any other problem arises while process of registration 
+admin can add user and have the full control to handle the details present on the website 
+also it can post announcement and see the recent announcement and can delete them and have the full control on that also 
 
-the phone number will be only register once no once can register second time with the same mobile number 
+the admin can access to every category presented on the user's dashboard where admin can make change and it reflect on the user's screen live 
 
-
-and after the registration and successfull verification of otp there should be normal clean and professional animation should be arises of the right sign (correct sign - green color and the sign should be done with a animation) 
-
-and then create a dashboard area for now which will remain clean for now just checking and will be deigned afterwards 
-
+the upper title of the page must be " SLPS ADMIN DASHBOARD "
+for the user dashboard title must be  " SLPS USER DASHBOARD "
+and for the main website it should only by " SLPS VAPI " 

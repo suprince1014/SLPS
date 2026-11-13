@@ -518,13 +518,13 @@ const INITIAL_TRUSTEES = [
 const INITIAL_ANNOUNCEMENTS = [
   {
     id: "ANN-01",
-    title: "Urgent: Blood Requirement for O- and B+ Emergency Circle",
-    priority: "Urgent",
+    title: "Mega Blood Donation & Free Medical Health Screening Camp",
+    priority: "Normal",
     pinned: true,
     published_by: "Medical Aid Committee",
     published_date: "11 Nov 2026",
-    description: "Emergency appeal for B+ and O- blood donors for two community patients admitted at Haria L.G. Rotary Hospital, Vapi. Willing donors are requested to contact our Emergency Helpdesk (+91 98765 43210) immediately or report to the blood bank counter.",
-    attachment: "Blood_Emergency_Notice_11Nov.pdf"
+    description: "Annual voluntary blood donation drive and comprehensive medical health screening organized at Samaj Bhavan in association with Haria L.G. Rotary Hospital, Vapi. All youth members and families are cordially invited to participate.",
+    attachment: "Blood_Camp_Notice_11Nov.pdf"
   },
   {
     id: "ANN-02",
@@ -649,7 +649,7 @@ function saveActiveMember(profile) {
   } else {
     directory.unshift(updatedEntry);
   }
-  setStoredItem("slps_members_directory", directory);
+  saveMembersDirectory(directory);
 }
 
 function getFamilyMembers() {
@@ -684,8 +684,35 @@ function saveMatrimonialProfiles(list) {
   setStoredItem("slps_matrimonial_profiles", list);
 }
 
+let membersDirectoryCache = null;
+
+async function loadExternalMembersJson() {
+  try {
+    const res = await fetch(`members.json?_t=${Date.now()}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        membersDirectoryCache = data;
+        localStorage.setItem("slps_members_directory", JSON.stringify(data));
+        return data;
+      }
+    }
+  } catch (err) {
+    console.info("Notice: Using embedded members fallback:", err.message);
+  }
+  return null;
+}
+
 function getMembersDirectory() {
+  if (membersDirectoryCache && Array.isArray(membersDirectoryCache)) {
+    return membersDirectoryCache;
+  }
   return getStoredItem("slps_members_directory", INITIAL_MEMBERS_DIRECTORY);
+}
+
+function saveMembersDirectory(list) {
+  membersDirectoryCache = list;
+  setStoredItem("slps_members_directory", list);
 }
 
 function getAnnouncements() {
@@ -843,146 +870,44 @@ function switchTab(tabId) {
 }
 
 // --- 1. TOP ANNOUNCEMENT CAROUSEL CONTROLLER (Above the Navbar) ---
-let currentCarouselIndex = 0;
-let carouselTimer = null;
-
 function initAnnouncementCarousel(announcementsList) {
   const track = document.querySelector("#carousel-slider-track");
-  const counter = document.querySelector("#carousel-counter");
-  const prevBtn = document.querySelector("#carousel-prev-btn");
-  const nextBtn = document.querySelector("#carousel-next-btn");
   const alertLabel = document.querySelector("#top-alert-label");
   const alertPill = document.querySelector("#top-alert-pill");
 
-  if (!track || announcementsList.length === 0) return;
+  if (!track || !announcementsList || announcementsList.length === 0) return;
 
-  // Build slides from actual community announcements
-  track.innerHTML = announcementsList
-    .map((a, idx) => {
-      const isUrgent = a.priority === "Urgent";
-      const icon = isUrgent ? "🚨" : a.priority === "Important" ? "⭐" : "📢";
-      return `
-      <div class="carousel-slide-item ${idx === 0 ? "is-active" : ""}" data-index="${idx}" data-priority="${a.priority}" data-jump-tab="announcements">
-        <span class="slide-content-text">
-          ${icon} <strong>${a.title}:</strong> ${a.description.substring(0, 115)}…
+  if (alertLabel && alertPill) {
+    alertLabel.textContent = "Community Notice";
+    alertPill.style.background = "var(--dash-green-dark)";
+  }
+
+  // Render items and duplicate them for a seamless continuous scrolling loop
+  const buildItems = () =>
+    announcementsList
+      .map((a, idx) => {
+        const icon = a.priority === "Important" ? "⭐" : "📢";
+        return `
+        <span class="ticker-item" data-index="${idx}" data-priority="${a.priority}" data-jump-tab="announcements">
+          <span class="slide-content-text">
+            ${icon} <strong>${a.title}:</strong> ${a.description.substring(0, 115)}…
+          </span>
+          <span class="ticker-bullet">&bull;</span>
         </span>
-        <span class="slide-action-link">View Details →</span>
-      </div>
-    `;
-    })
-    .join("");
+      `;
+      })
+      .join("");
 
-  const slides = track.querySelectorAll(".carousel-slide-item");
-  const total = slides.length;
-  let isAnimating = false;
+  const itemsHtml = buildItems();
+  // Duplicate for seamless 50% translation infinite loop
+  track.innerHTML = itemsHtml + itemsHtml;
 
-  function updateBadgeAndCounter(index) {
-    if (counter) counter.textContent = `${index + 1} / ${total}`;
-
-    const activeSlide = slides[index];
-    const priority = activeSlide ? activeSlide.dataset.priority : "Normal";
-    if (alertLabel && alertPill) {
-      if (priority === "Urgent") {
-        alertLabel.textContent = "Urgent Alert";
-        alertPill.style.background = "var(--dash-danger)";
-      } else if (priority === "Important") {
-        alertLabel.textContent = "Important Notice";
-        alertPill.style.background = "var(--dash-terracotta)";
-      } else {
-        alertLabel.textContent = "Community Notice";
-        alertPill.style.background = "var(--dash-green-dark)";
+  // Jump to announcements tab on click
+  track.querySelectorAll(".ticker-item").forEach((item) => {
+    item.onclick = () => {
+      if (typeof switchTab === "function") {
+        switchTab("announcements");
       }
-    }
-  }
-
-  // Set initial badge and counter
-  updateBadgeAndCounter(currentCarouselIndex);
-
-  function goToSlide(targetIndex, direction = "next") {
-    if (total <= 1 || isAnimating) return;
-    const normalizedTarget = (targetIndex + total) % total;
-    if (normalizedTarget === currentCarouselIndex) return;
-
-    const prevIndex = currentCarouselIndex;
-    currentCarouselIndex = normalizedTarget;
-
-    const currentSlide = slides[prevIndex];
-    const nextSlide = slides[currentCarouselIndex];
-
-    isAnimating = true;
-
-    // Reset classes and position incoming slide at the starting boundary without transition
-    nextSlide.classList.remove("slide-out-left", "slide-out-right", "is-active");
-    if (direction === "next") {
-      nextSlide.classList.add("prepare-from-right");
-    } else {
-      nextSlide.classList.add("prepare-from-left");
-    }
-
-    // Force browser repaint to anchor initial position
-    void nextSlide.offsetWidth;
-
-    // Remove prepare class so smooth CSS transition activates
-    nextSlide.classList.remove("prepare-from-right", "prepare-from-left");
-
-    // Animate current slide out
-    currentSlide.classList.remove("is-active");
-    if (direction === "next") {
-      currentSlide.classList.add("slide-out-left");
-    } else {
-      currentSlide.classList.add("slide-out-right");
-    }
-
-    // Animate next slide in from right to center
-    nextSlide.classList.add("is-active");
-
-    updateBadgeAndCounter(currentCarouselIndex);
-
-    setTimeout(() => {
-      currentSlide.classList.remove("slide-out-left", "slide-out-right");
-      isAnimating = false;
-    }, 680);
-  }
-
-  function nextSlide() {
-    goToSlide(currentCarouselIndex + 1, "next");
-  }
-
-  function prevSlide() {
-    goToSlide(currentCarouselIndex - 1, "prev");
-  }
-
-  if (nextBtn) {
-    nextBtn.onclick = (e) => {
-      e.stopPropagation();
-      nextSlide();
-      resetTimer();
-    };
-  }
-
-  if (prevBtn) {
-    prevBtn.onclick = (e) => {
-      e.stopPropagation();
-      prevSlide();
-      resetTimer();
-    };
-  }
-
-  function resetTimer() {
-    clearInterval(carouselTimer);
-    carouselTimer = setInterval(nextSlide, 4500);
-  }
-
-  resetTimer();
-
-  // Pause on hover
-  track.onmouseenter = () => clearInterval(carouselTimer);
-  track.onmouseleave = () => resetTimer();
-
-  // Slide click jump
-  slides.forEach((slide) => {
-    slide.onclick = () => {
-      switchTab("announcements");
     };
   });
 }
@@ -2790,22 +2715,46 @@ function initEventListeners() {
 }
 
 // --- BOOTSTRAP ---
-try {
-  initEventListeners();
-  renderDashboard();
+async function startApp() {
+  try {
+    initEventListeners();
+    // 1. Fetch live members from members.json so additions/removals reflect immediately
+    await loadExternalMembersJson();
+    // 2. Render all dashboard sections, KPIs, and directory with the loaded members
+    renderDashboard();
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const requestedTab = urlParams.get("tab");
-  if (requestedTab) {
-    switchTab(requestedTab);
-  }
-} catch (err) {
-  console.error("Dashboard initialization error:", err);
-  const loading = document.querySelector("#dashboard-loading");
-  const errEl = document.querySelector("#dashboard-error");
-  if (loading) loading.hidden = true;
-  if (errEl) {
-    errEl.hidden = false;
-    errEl.textContent = `Could not load member dashboard: ${err.message || "Please refresh"}`;
+    // 3. Live Synchronization Listener: Instantly reflects changes made in Admin Portal across open tabs
+    window.addEventListener("storage", (e) => {
+      if (
+        e.key === "slps_members_directory" ||
+        e.key === "slps_announcements" ||
+        e.key === "slps_businesses" ||
+        e.key === "slps_job_profiles" ||
+        e.key === "slps_matrimonial_profiles"
+      ) {
+        console.info("Live update received from Admin Portal for key:", e.key);
+        renderDashboard();
+        if (e.key === "slps_announcements") {
+          initAnnouncementCarousel(getAnnouncements());
+        }
+      }
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedTab = urlParams.get("tab");
+    if (requestedTab) {
+      switchTab(requestedTab);
+    }
+  } catch (err) {
+    console.error("Dashboard initialization error:", err);
+    const loading = document.querySelector("#dashboard-loading");
+    const errEl = document.querySelector("#dashboard-error");
+    if (loading) loading.hidden = true;
+    if (errEl) {
+      errEl.hidden = false;
+      errEl.textContent = `Could not load member dashboard: ${err.message || "Please refresh"}`;
+    }
   }
 }
+
+startApp();

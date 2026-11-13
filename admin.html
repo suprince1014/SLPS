@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <meta name="theme-color" content="#f8f7f2" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8f7f2" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f8f7f2" />
+    <title>SLPS ADMIN DASHBOARD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="admin.css" />
+    <!-- jsPDF & AutoTable for direct client-side PDF document generation -->
+    <script src="vendor/jspdf.umd.min.js"></script>
+    <script src="vendor/jspdf.plugin.autotable.min.js"></script>
+    <script src="admin.js" defer></script>
+  </head>
+  <body>
+    <!-- ==========================================================
+         1. ADMIN AUTHENTICATION GATE (CENTER OF THE SCREEN)
+         ========================================================== -->
+    <main class="admin-auth-screen" id="admin-auth-screen">
+      <div class="admin-auth-card">
+        <!-- Logo & Brand Header -->
+        <div class="admin-auth-brand">
+          <img class="admin-auth-logo" src="assets/logo.webp" alt="SLPS Logo" />
+          <span class="admin-auth-badge">Executive Security Gateway</span>
+          <h1 class="admin-auth-title">Admin Portal</h1>
+          <p class="admin-auth-desc">Enter administrator credentials to manage member directories &amp; portal settings.</p>
+        </div>
+
+        <!-- Credentials Form Wrap -->
+        <div id="admin-auth-form-wrap">
+          <form class="admin-auth-form" id="admin-login-form">
+            <!-- Inline Error Box -->
+            <div class="admin-error-box" id="admin-error" hidden></div>
+
+            <div class="admin-form-group">
+              <label class="admin-form-label" for="admin-user">Administrator Username</label>
+              <div class="admin-input-wrap">
+                <input
+                  type="text"
+                  id="admin-user"
+                  class="admin-input"
+                  placeholder="Enter username"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-form-label" for="admin-pass">Access Password</label>
+              <div class="admin-input-wrap">
+                <input
+                  type="password"
+                  id="admin-pass"
+                  class="admin-input"
+                  placeholder="Enter password"
+                  autocomplete="current-password"
+                  required
+                />
+                <button type="button" class="admin-password-toggle" id="toggle-pass-visibility" aria-label="Toggle password visibility">
+                  👁️
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="admin-submit-btn">
+              <span>Sign In to Admin Portal</span>
+              <span>→</span>
+            </button>
+          </form>
+
+          <div class="admin-auth-footer">
+            <span>SLPS Vapi &bull; Authorized Access</span>
+            <a href="index.html">← Back to Website</a>
+          </div>
+        </div>
+
+        <!-- Success Animation Sign (Exact SVG Checkmark - NO TEXT with it) -->
+        <div class="admin-success-state" id="admin-success-state" hidden>
+          <div class="success-icon-wrap" aria-hidden="true">
+            <div class="success-ring-glow"></div>
+            <div class="success-ring-pulse"></div>
+            <div class="success-check-circle">
+              <svg class="success-svg" viewBox="0 0 52 52">
+                <circle class="success-svg-circle" cx="26" cy="26" r="23" fill="none" />
+                <path class="success-svg-check" fill="none" d="M14.5 27.2l7.8 7.8 15.2-15.5" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ==========================================================
+         2. MINIMALIST ADMIN DASHBOARD SCREEN
+         ========================================================== -->
+    <div class="admin-app" id="admin-dashboard-screen" hidden>
+      <!-- Top Navigation Header -->
+      <header class="admin-header">
+        <div class="admin-header-left">
+          <img class="admin-header-logo" src="assets/logo.webp" alt="SLPS Logo" />
+          <span class="admin-header-title">SLPS ADMIN DASHBOARD</span>
+          <span class="admin-header-badge">Managing Portal</span>
+        </div>
+
+        <div class="admin-header-center">
+          <div class="admin-search-wrap">
+            <span class="admin-search-icon">🔍</span>
+            <input
+              type="search"
+              class="admin-search-input"
+              id="admin-global-search"
+              placeholder="Search members by name, ID, city, occupation, phone…"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="admin-header-right">
+          <div class="admin-sync-indicator" title="Connected to members.json">
+            <span class="admin-sync-dot"></span>
+            <span>Live Data Sync</span>
+          </div>
+
+          <div class="admin-user-profile" title="Signed in as Chief Administrator">
+            <div class="admin-avatar">SK</div>
+            <div class="admin-user-info">
+              <span class="admin-user-name">Suprince Kakadiya</span>
+              <span class="admin-user-role">Chief Administrator</span>
+            </div>
+          </div>
+
+          <button class="admin-signout-btn" id="admin-signout-btn" type="button" title="Sign out of Admin session">
+            <span>Sign Out</span>
+            <span>🚪</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Admin Content Area -->
+      <main class="admin-main">
+        <!-- Banner Bar -->
+        <div class="admin-banner-bar">
+          <div class="admin-banner-copy">
+            <h1>Member Master Administration</h1>
+            <p>Welcome, <strong>Suprince Kakadiya</strong>. Comprehensive executive view and management of all community member records.</p>
+          </div>
+          <div class="admin-banner-actions">
+            <button class="admin-btn admin-btn-primary" id="admin-add-member-trigger" type="button">
+              <span>+ Add New Member</span>
+            </button>
+            <button class="admin-btn admin-btn-outline" id="admin-export-pdf-btn" type="button" title="Generate and download official PDF directory of all member entries">
+              <span>📄 Download Members PDF</span>
+            </button>
+            <button class="admin-btn admin-btn-outline" id="admin-export-json-btn" type="button" title="Download current records as members.json">
+              <span>📥 Export JSON</span>
+            </button>
+            <button class="admin-btn admin-btn-outline" id="admin-reload-json-btn" type="button" title="Reload directly from members.json file">
+              <span>🔄 Refresh from File</span>
+            </button>
+            <a class="admin-btn admin-btn-outline" href="dashboard.html" target="_blank" title="Preview public member dashboard">
+              <span>↗ Member View</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Minimalist KPI Metrics -->
+        <section class="admin-kpi-grid">
+          <div class="admin-kpi-card">
+            <span class="admin-kpi-icon">👥</span>
+            <span class="admin-kpi-label">Total Members</span>
+            <span class="admin-kpi-val" id="kpi-total-members">12</span>
+          </div>
+          <div class="admin-kpi-card">
+            <span class="admin-kpi-icon">🛡️</span>
+            <span class="admin-kpi-label">Verified Life</span>
+            <span class="admin-kpi-val" id="kpi-verified-members">12</span>
+          </div>
+          <div class="admin-kpi-card">
+            <span class="admin-kpi-icon">🩸</span>
+            <span class="admin-kpi-label">Blood Donors</span>
+            <span class="admin-kpi-val" id="kpi-blood-donors">12</span>
+          </div>
+          <div class="admin-kpi-card">
+            <span class="admin-kpi-icon">🏢</span>
+            <span class="admin-kpi-label">Businesses</span>
+            <span class="admin-kpi-val" id="kpi-total-biz">5</span>
+          </div>
+          <div class="admin-kpi-card">
+            <span class="admin-kpi-icon">💼</span>
+            <span class="admin-kpi-label">Career Resumes</span>
+            <span class="admin-kpi-val" id="kpi-total-jobs">4</span>
+          </div>
+          <div class="admin-kpi-card">
+            <span class="admin-kpi-icon">💍</span>
+            <span class="admin-kpi-label">Matrimonial</span>
+            <span class="admin-kpi-val" id="kpi-total-matri">6</span>
+          </div>
+        </section>
+
+        <!-- Admin Category Navigation Tabs -->
+        <nav class="admin-category-nav" id="admin-category-nav" aria-label="Portal Categories">
+          <button class="admin-cat-tab is-active" data-cat="members" type="button">
+            <span>👥 Members Directory</span>
+            <span class="admin-cat-pill" id="cat-count-members">12</span>
+          </button>
+          <button class="admin-cat-tab" data-cat="announcements" type="button">
+            <span>📢 Announcements &amp; Notices</span>
+            <span class="admin-cat-pill" id="cat-count-announcements">4</span>
+          </button>
+          <button class="admin-cat-tab" data-cat="businesses" type="button">
+            <span>🏢 Business Directory</span>
+            <span class="admin-cat-pill" id="cat-count-businesses">5</span>
+          </button>
+          <button class="admin-cat-tab" data-cat="jobs" type="button">
+            <span>💼 Job Portal</span>
+            <span class="admin-cat-pill" id="cat-count-jobs">4</span>
+          </button>
+          <button class="admin-cat-tab" data-cat="matrimonial" type="button">
+            <span>💍 Matrimonial Profiles</span>
+            <span class="admin-cat-pill" id="cat-count-matrimonial">6</span>
+          </button>
+        </nav>
+
+        <!-- ==========================================================
+             PANE 1: MEMBERS DIRECTORY
+             ========================================================== -->
+        <div class="admin-cat-pane" id="admin-pane-members">
+          <!-- Filter Controls Bar -->
+          <div class="admin-filter-bar">
+            <div class="admin-filter-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--adm-muted);">FILTER BY:</label>
+              <select class="admin-select" id="filter-city">
+                <option value="all">All Cities</option>
+              </select>
+              <select class="admin-select" id="filter-blood">
+                <option value="all">All Blood Groups</option>
+                <option value="A+">A+</option>
+                <option value="B+">B+</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+              </select>
+              <select class="admin-select" id="filter-gender">
+                <option value="all">All Genders</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div class="admin-count-tag" id="filtered-count-tag">
+              Showing records...
+            </div>
+          </div>
+
+          <!-- Master Members Table -->
+          <div class="admin-table-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="admin-members-table">
+                <thead>
+                  <tr>
+                    <th>Member ID</th>
+                    <th>Full Name</th>
+                    <th>Blood</th>
+                    <th>City / District</th>
+                    <th>Occupation</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-members-tbody">
+                  <!-- Dynamically loaded from members.json -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==========================================================
+             PANE 2: ANNOUNCEMENTS & NOTICES (FULL ADMIN CONTROL)
+             ========================================================== -->
+        <div class="admin-cat-pane" id="admin-pane-announcements" hidden>
+          <div class="admin-pane-header">
+            <div class="admin-pane-title-group">
+              <h2>Community Announcements &amp; Circulars</h2>
+              <p>Post, edit, prioritize, and delete live notices reflected on all user dashboards instantly.</p>
+            </div>
+            <button class="admin-btn admin-btn-primary" id="admin-add-ann-trigger" type="button">
+              <span>+ Post New Announcement</span>
+            </button>
+          </div>
+
+          <!-- Priority Filter Bar -->
+          <div class="admin-filter-bar">
+            <div class="admin-filter-group">
+              <label style="font-size:11.5px; font-weight:700; color:var(--adm-muted);">PRIORITY FILTER:</label>
+              <select class="admin-select" id="filter-ann-priority">
+                <option value="all">All Announcements</option>
+                <option value="Urgent">🚨 Urgent Alerts</option>
+                <option value="Important">⭐ Important Notices</option>
+                <option value="Normal">Regular Circulars</option>
+              </select>
+            </div>
+            <div class="admin-count-tag" id="ann-count-tag">
+              Showing notices...
+            </div>
+          </div>
+
+          <!-- Announcements Grid -->
+          <div class="admin-card-grid" id="admin-announcements-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- ==========================================================
+             PANE 3: BUSINESS DIRECTORY (FULL ADMIN CONTROL)
+             ========================================================== -->
+        <div class="admin-cat-pane" id="admin-pane-businesses" hidden>
+          <div class="admin-pane-header">
+            <div class="admin-pane-title-group">
+              <h2>Community Business Directory</h2>
+              <p>Manage verified businesses, trade classifications, and member enterprises.</p>
+            </div>
+            <button class="admin-btn admin-btn-primary" id="admin-add-biz-trigger" type="button">
+              <span>+ Add New Business</span>
+            </button>
+          </div>
+
+          <div class="admin-card-grid" id="admin-businesses-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- ==========================================================
+             PANE 4: JOB PORTAL (FULL ADMIN CONTROL)
+             ========================================================== -->
+        <div class="admin-cat-pane" id="admin-pane-jobs" hidden>
+          <div class="admin-pane-header">
+            <div class="admin-pane-title-group">
+              <h2>Career &amp; Employment Portal</h2>
+              <p>Manage job profiles, professional skills, and recruitment opportunities for youth members.</p>
+            </div>
+            <button class="admin-btn admin-btn-primary" id="admin-add-job-trigger" type="button">
+              <span>+ Post Career Profile</span>
+            </button>
+          </div>
+
+          <div class="admin-card-grid" id="admin-jobs-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- ==========================================================
+             PANE 5: MATRIMONIAL PROFILES (FULL ADMIN CONTROL)
+             ========================================================== -->
+        <div class="admin-cat-pane" id="admin-pane-matrimonial" hidden>
+          <div class="admin-pane-header">
+            <div class="admin-pane-title-group">
+              <h2>Matrimonial Matchmaking Directory</h2>
+              <p>Confidential profiles and parental verification records for community alliances.</p>
+            </div>
+            <button class="admin-btn admin-btn-primary" id="admin-add-matri-trigger" type="button">
+              <span>+ Add Matrimonial Profile</span>
+            </button>
+          </div>
+
+          <div class="admin-card-grid" id="admin-matrimonial-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ==========================================================
+         3. VIEW EVERY INFORMATION: FULL DOSSIER MODAL
+         ========================================================== -->
+    <div class="admin-modal-backdrop" id="admin-dossier-modal" hidden>
+      <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="dossier-modal-title">
+        <div class="admin-modal-header">
+          <h3 id="dossier-modal-title">Comprehensive Member Dossier</h3>
+          <button type="button" class="admin-modal-close" aria-label="Close modal">✕</button>
+        </div>
+        <div class="admin-modal-body" id="dossier-modal-content">
+          <!-- Filled dynamically with every piece of member information -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         4. ADD / EDIT MEMBER MODAL
+         ========================================================== -->
+    <div class="admin-modal-backdrop" id="admin-edit-modal" hidden>
+      <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+        <div class="admin-modal-header">
+          <h3 id="edit-modal-title">Member Record Details</h3>
+          <button type="button" class="admin-modal-close" aria-label="Close modal">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <form id="admin-member-form">
+            <input type="hidden" id="edit-member-mode" value="add" />
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-id">Member ID</label>
+                <input type="text" id="edit-member-id" class="admin-input" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-name">Full Name</label>
+                <input type="text" id="edit-member-name" class="admin-input" placeholder="e.g. Suprince Vijaybhai Kakadiya" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-gender">Gender</label>
+                <select id="edit-member-gender" class="admin-input" style="height:44px;">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-dob">Date of Birth</label>
+                <input type="date" id="edit-member-dob" class="admin-input" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-blood">Blood Group</label>
+                <select id="edit-member-blood" class="admin-input" style="height:44px;">
+                  <option value="A+">A+</option>
+                  <option value="B+">B+</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-city">Current City</label>
+                <input type="text" id="edit-member-city" class="admin-input" placeholder="e.g. Vapi" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-district">District</label>
+                <input type="text" id="edit-member-district" class="admin-input" value="Valsad" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-occ">Occupation / Profession</label>
+                <input type="text" id="edit-member-occ" class="admin-input" placeholder="e.g. Software Engineer" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-member-phone">Phone Number</label>
+                <input type="tel" id="edit-member-phone" class="admin-input" placeholder="e.g. +91 94081 91506" />
+              </div>
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom:20px;">
+              <label class="admin-form-label" for="edit-member-email">Email Address</label>
+              <input type="email" id="edit-member-email" class="admin-input" placeholder="e.g. member@gmail.com" />
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+              <button type="button" class="admin-btn admin-btn-outline admin-modal-cancel">Cancel</button>
+              <button type="submit" class="admin-btn admin-btn-primary">Save Member Record</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         5. POST / EDIT ANNOUNCEMENT MODAL
+         ========================================================== -->
+    <div class="admin-modal-backdrop" id="admin-ann-modal" hidden>
+      <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="ann-modal-title">
+        <div class="admin-modal-header">
+          <h3 id="ann-modal-title">Post Community Announcement</h3>
+          <button type="button" class="admin-modal-close" aria-label="Close modal">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <form id="admin-ann-form">
+            <input type="hidden" id="edit-ann-id" value="" />
+
+            <div class="admin-form-group" style="margin-bottom:14px;">
+              <label class="admin-form-label" for="edit-ann-title">Announcement Title</label>
+              <input type="text" id="edit-ann-title" class="admin-input" placeholder="e.g. Free Medical Screening Camp" required />
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-ann-priority">Priority Level</label>
+                <select id="edit-ann-priority" class="admin-input" style="height:44px;">
+                  <option value="Normal">Normal Notice</option>
+                  <option value="Important">⭐ Important Notice</option>
+                  <option value="Urgent">🚨 Urgent Alert</option>
+                </select>
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-ann-published-by">Published Authority</label>
+                <input type="text" id="edit-ann-published-by" class="admin-input" value="Central Executive Committee" required />
+              </div>
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom:14px;">
+              <label class="admin-form-label" for="edit-ann-attach">Attachment Name (Optional PDF/Circular)</label>
+              <input type="text" id="edit-ann-attach" class="admin-input" placeholder="e.g. Circular_Nov2026.pdf" />
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom:20px;">
+              <label class="admin-form-label" for="edit-ann-desc">Full Announcement Notice Body</label>
+              <textarea id="edit-ann-desc" class="admin-input" rows="4" style="height:auto; padding:10px;" placeholder="Enter details..." required></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+              <button type="button" class="admin-btn admin-btn-outline admin-modal-cancel">Cancel</button>
+              <button type="submit" class="admin-btn admin-btn-primary">Publish Announcement</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         6. ADD / EDIT BUSINESS MODAL
+         ========================================================== -->
+    <div class="admin-modal-backdrop" id="admin-biz-modal" hidden>
+      <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="biz-modal-title">
+        <div class="admin-modal-header">
+          <h3 id="biz-modal-title">Add Business Directory Listing</h3>
+          <button type="button" class="admin-modal-close" aria-label="Close modal">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <form id="admin-biz-form">
+            <input type="hidden" id="edit-biz-id" value="" />
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-biz-name">Business Enterprise Name</label>
+                <input type="text" id="edit-biz-name" class="admin-input" placeholder="e.g. Kakadiya Textiles" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-biz-category">Industry Category</label>
+                <input type="text" id="edit-biz-category" class="admin-input" placeholder="e.g. Textiles & Fabrics" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-biz-owner">Owner / Contact Person</label>
+                <input type="text" id="edit-biz-owner" class="admin-input" placeholder="e.g. Vijaybhai Kakadiya" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-biz-phone">Direct Phone</label>
+                <input type="tel" id="edit-biz-phone" class="admin-input" placeholder="e.g. +91 98251 12345" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-biz-email">Official Email</label>
+                <input type="email" id="edit-biz-email" class="admin-input" placeholder="e.g. info@business.com" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-biz-city">City / GIDC Location</label>
+                <input type="text" id="edit-biz-city" class="admin-input" placeholder="e.g. GIDC Phase 2, Vapi" required />
+              </div>
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom:20px;">
+              <label class="admin-form-label" for="edit-biz-desc">Business Description &amp; Services</label>
+              <textarea id="edit-biz-desc" class="admin-input" rows="3" style="height:auto; padding:10px;" placeholder="Brief details about the company..." required></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+              <button type="button" class="admin-btn admin-btn-outline admin-modal-cancel">Cancel</button>
+              <button type="submit" class="admin-btn admin-btn-primary">Save Business</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         7. ADD / EDIT JOB MODAL
+         ========================================================== -->
+    <div class="admin-modal-backdrop" id="admin-job-modal" hidden>
+      <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="job-modal-title">
+        <div class="admin-modal-header">
+          <h3 id="job-modal-title">Post Career Profile / Job</h3>
+          <button type="button" class="admin-modal-close" aria-label="Close modal">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <form id="admin-job-form">
+            <input type="hidden" id="edit-job-id" value="" />
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-job-name">Candidate / Applicant Name</label>
+                <input type="text" id="edit-job-name" class="admin-input" placeholder="e.g. Suprince Kakadiya" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-job-title">Designation / Role</label>
+                <input type="text" id="edit-job-title" class="admin-input" placeholder="e.g. Full Stack Developer" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-job-exp">Experience</label>
+                <input type="text" id="edit-job-exp" class="admin-input" placeholder="e.g. 2 Years" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-job-edu">Highest Education</label>
+                <input type="text" id="edit-job-edu" class="admin-input" placeholder="e.g. B.Tech Computer Science" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-job-phone">Contact Phone</label>
+                <input type="tel" id="edit-job-phone" class="admin-input" placeholder="e.g. +91 94081 91506" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-job-city">Preferred City</label>
+                <input type="text" id="edit-job-city" class="admin-input" value="Vapi" required />
+              </div>
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom:20px;">
+              <label class="admin-form-label" for="edit-job-skills">Key Technical / Professional Skills</label>
+              <input type="text" id="edit-job-skills" class="admin-input" placeholder="e.g. React, Node.js, Python, Cloud" required />
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+              <button type="button" class="admin-btn admin-btn-outline admin-modal-cancel">Cancel</button>
+              <button type="submit" class="admin-btn admin-btn-primary">Save Job Profile</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         8. ADD / EDIT MATRIMONIAL MODAL
+         ========================================================== -->
+    <div class="admin-modal-backdrop" id="admin-matri-modal" hidden>
+      <div class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="matri-modal-title">
+        <div class="admin-modal-header">
+          <h3 id="matri-modal-title">Add Matrimonial Candidate Profile</h3>
+          <button type="button" class="admin-modal-close" aria-label="Close modal">✕</button>
+        </div>
+        <div class="admin-modal-body">
+          <form id="admin-matri-form">
+            <input type="hidden" id="edit-matri-id" value="" />
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-name">Candidate Full Name</label>
+                <input type="text" id="edit-matri-name" class="admin-input" placeholder="e.g. Drashti M. Vaghani" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-gender">Gender</label>
+                <select id="edit-matri-gender" class="admin-input" style="height:44px;">
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-age">Age (Years)</label>
+                <input type="number" id="edit-matri-age" class="admin-input" placeholder="e.g. 27" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-height">Height</label>
+                <input type="text" id="edit-matri-height" class="admin-input" placeholder="e.g. 5' 4\"" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-city">City</label>
+                <input type="text" id="edit-matri-city" class="admin-input" value="Vapi" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-edu">Education</label>
+                <input type="text" id="edit-matri-edu" class="admin-input" placeholder="e.g. M.Pharm" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-occ">Occupation</label>
+                <input type="text" id="edit-matri-occ" class="admin-input" placeholder="e.g. QA Manager" required />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-village">Native Saurashtra Village</label>
+                <input type="text" id="edit-matri-village" class="admin-input" placeholder="e.g. Bagasara" required />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="edit-matri-phone">Parent / Family Contact</label>
+                <input type="tel" id="edit-matri-phone" class="admin-input" placeholder="e.g. +91 98240 77889" required />
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+              <button type="button" class="admin-btn admin-btn-outline admin-modal-cancel">Cancel</button>
+              <button type="submit" class="admin-btn admin-btn-primary">Save Matrimonial Profile</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="admin-toast" id="admin-toast" role="status" aria-live="polite">
+      <span class="admin-toast-icon">✓</span>
+      <span id="admin-toast-msg">Operation completed successfully.</span>
+    </div>
+  </body>
+</html>
+

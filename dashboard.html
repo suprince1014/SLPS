@@ -4,13 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
     <meta name="description" content="SLPS Vapi verified member community management portal & dynamic dashboard." />
     <meta name="theme-color" content="#f8f7f2" />
-    <title>Community Portal & Member Dashboard | SLPS Vapi</title>
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8f7f2" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f8f7f2" />
+    <title>SLPS USER DASHBOARD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Lora:wght@500;600;700&family=Montserrat:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&family=Manrope:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -21,48 +24,46 @@
     <!-- ==========================================================
          1. TOP ANNOUNCEMENT CAROUSEL (RUNNING ABOVE THE NAVBAR)
          ========================================================== -->
-    <aside class="top-announcements-bar" id="top-announcements-bar" aria-label="Community Alert Marquee">
+    <aside class="top-announcements-bar" id="top-announcements-bar" aria-label="Community Announcement Marquee">
       <div class="carousel-bar-inner">
-        <div class="carousel-badge-wrap">
-          <span class="top-alert-pill" id="top-alert-pill">
-            <span class="top-alert-pulse" aria-hidden="true"></span>
-            <span id="top-alert-label">Urgent Alert</span>
-          </span>
-        </div>
+        <!-- Continuous Ticker Carousel Track (Items duplicated for seamless loop) -->
+        <div class="ticker-wrapper" id="top-ticker-wrapper">
+          <div class="ticker-track" id="carousel-slider-track">
+            <span class="ticker-item" data-jump-tab="announcements">
+              <span class="slide-content-text">🩺 <strong>Mega Blood Donation &amp; Free Medical Health Camp:</strong> Annual voluntary health drive organized at Samaj Bhavan.</span>
+              <span class="ticker-bullet">&bull;</span>
+            </span>
+            <span class="ticker-item" data-jump-tab="overview">
+              <span class="slide-content-text">✨ <strong>SLPS Annual Sneha Milan &amp; Cultural Night 2026:</strong> Registration Open for 28th Nov.</span>
+              <span class="ticker-bullet">&bull;</span>
+            </span>
+            <span class="ticker-item" data-jump-tab="announcements">
+              <span class="slide-content-text">🎓 <strong>Higher Education Merit Scholarships 2026-27:</strong> Applications Invited - Apply by Dec 15.</span>
+              <span class="ticker-bullet">&bull;</span>
+            </span>
+            <span class="ticker-item" data-jump-tab="announcements">
+              <span class="slide-content-text">🏛️ <strong>Newly Renovated AC Main Banquet Hall:</strong> Available for Booking at Subsidized Member Tariff.</span>
+              <span class="ticker-bullet">&bull;</span>
+            </span>
 
-        <!-- Sliding Track containing cycling announcements -->
-        <div class="carousel-slider-track" id="carousel-slider-track">
-          <div class="carousel-slide-item is-active" data-index="0" data-jump-tab="announcements">
-            <span class="slide-content-text">
-              🚨 Urgent: Blood Requirement for O- and B+ Emergency Circle at Haria L.G. Rotary Hospital, Vapi.
+            <!-- Duplicate items for seamless continuous loop -->
+            <span class="ticker-item" data-jump-tab="announcements">
+              <span class="slide-content-text">🩺 <strong>Mega Blood Donation &amp; Free Medical Health Camp:</strong> Annual voluntary health drive organized at Samaj Bhavan.</span>
+              <span class="ticker-bullet">&bull;</span>
             </span>
-            <span class="slide-action-link">View Notice &amp; Contacts →</span>
-          </div>
-          <div class="carousel-slide-item" data-index="1" data-jump-tab="overview">
-            <span class="slide-content-text">
-              ✨ SLPS Annual Sneha Milan &amp; Cultural Night 2026 - Registration Open for 28th Nov.
+            <span class="ticker-item" data-jump-tab="overview">
+              <span class="slide-content-text">✨ <strong>SLPS Annual Sneha Milan &amp; Cultural Night 2026:</strong> Registration Open for 28th Nov.</span>
+              <span class="ticker-bullet">&bull;</span>
             </span>
-            <span class="slide-action-link">RSVP Pass →</span>
-          </div>
-          <div class="carousel-slide-item" data-index="2" data-jump-tab="announcements">
-            <span class="slide-content-text">
-              🎓 Higher Education Merit Scholarships 2026-27 Applications Invited - Apply by Dec 15.
+            <span class="ticker-item" data-jump-tab="announcements">
+              <span class="slide-content-text">🎓 <strong>Higher Education Merit Scholarships 2026-27:</strong> Applications Invited - Apply by Dec 15.</span>
+              <span class="ticker-bullet">&bull;</span>
             </span>
-            <span class="slide-action-link">Apply Now →</span>
-          </div>
-          <div class="carousel-slide-item" data-index="3" data-jump-tab="announcements">
-            <span class="slide-content-text">
-              🏛️ Newly Renovated AC Main Banquet Hall Available for Booking at Subsidized Member Tariff.
+            <span class="ticker-item" data-jump-tab="announcements">
+              <span class="slide-content-text">🏛️ <strong>Newly Renovated AC Main Banquet Hall:</strong> Available for Booking at Subsidized Member Tariff.</span>
+              <span class="ticker-bullet">&bull;</span>
             </span>
-            <span class="slide-action-link">Tariff Details →</span>
           </div>
-        </div>
-
-        <!-- Carousel Manual Controls -->
-        <div class="carousel-controls">
-          <button class="carousel-arrow-btn" id="carousel-prev-btn" type="button" aria-label="Previous alert">‹</button>
-          <span class="carousel-counter-label" id="carousel-counter">1 / 4</span>
-          <button class="carousel-arrow-btn" id="carousel-next-btn" type="button" aria-label="Next alert">›</button>
         </div>
       </div>
     </aside>
@@ -82,7 +83,7 @@
             <img class="brand-logo" src="assets/logo.webp" alt="SLPS Logo" />
           </div>
           <div class="sidebar-brand-copy">
-            <strong>SLPS VAPI</strong>
+            <strong>SLPS USER DASHBOARD</strong>
             <small>Saurashtra Leuva Patel Samaj</small>
           </div>
           <button class="sidebar-close-btn" id="sidebar-close-btn" type="button" aria-label="Close navigation drawer">✕</button>
@@ -170,12 +171,16 @@
         <header class="dashboard-header">
           <!-- Mobile Sidebar Toggle & Brand -->
           <div class="mobile-header-left">
-            <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle" type="button" aria-label="Toggle navigation menu">
-              ☰
+            <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle" type="button" aria-label="Open navigation menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
             </button>
             <div class="mobile-header-brand" id="mobile-header-brand" data-jump-tab="overview" title="Go to Overview">
               <img class="mobile-header-logo" src="assets/logo.webp" alt="SLPS Logo" />
-              <span class="mobile-header-title">SLPS Vapi</span>
+              <span class="mobile-header-title">SLPS USER DASHBOARD</span>
             </div>
           </div>
 
@@ -236,11 +241,6 @@
                 <span class="user-member-id-tag" id="header-user-id">SLPS-2026-1001</span>
               </div>
             </div>
-
-            <!-- Sign Out Button (Clicking directly signs out & redirects to website login) -->
-            <button class="button button-small button-outline" id="sign-out" type="button" title="Sign out and return to website">
-              Sign out
-            </button>
           </div>
         </header>
 
@@ -271,7 +271,7 @@
               <div class="dash-welcome-copy">
                 <div class="eyebrow"><span></span> SLPS Vapi Member Management Portal</div>
                 <h1>
-                  Namaste, <em id="member-display-name">Suprince.</em>
+                  <span class="welcome-greeting">Hello,</span> <em id="member-display-name">Suprince.</em>
                 </h1>
                 <p>
                   Your Samaj digital membership is <strong class="text-success">active &amp; verified</strong>. Manage your family records, explore community businesses, register for employment, and stay updated with official Samaj announcements.
@@ -1124,9 +1124,6 @@
                   Official circulars, urgent emergency medical alerts, and community notices.
                 </p>
               </div>
-              <button class="button button-small button-primary" id="open-post-announcement-modal" type="button">
-                + Post Announcement
-              </button>
             </div>
 
             <!-- Priority Filters -->
@@ -1890,10 +1887,6 @@
       <button class="mobile-nav-btn" type="button" data-tab="announcements">
         <span class="mobile-nav-icon">📢</span>
         <span class="mobile-nav-label">Notices</span>
-      </button>
-      <button class="mobile-nav-btn" type="button" id="mobile-bottom-menu-trigger">
-        <span class="mobile-nav-icon">☰</span>
-        <span class="mobile-nav-label">Menu</span>
       </button>
     </nav>
 
