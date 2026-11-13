@@ -107,10 +107,65 @@ heroBackgroundLayers.forEach((layer, layerIndex) => {
 });
 
 showSlide(0);
-document.querySelector("#slide-prev").addEventListener("click", () => showSlide(activeSlide - 1));
-document.querySelector("#slide-next").addEventListener("click", () => showSlide(activeSlide + 1));
-dots.forEach((dot, index) => dot.addEventListener("click", () => showSlide(index)));
-window.setInterval(() => showSlide(activeSlide + 1), 5000);
+
+let slideInterval = null;
+function startSlideTimer() {
+  stopSlideTimer();
+  slideInterval = window.setInterval(() => showSlide(activeSlide + 1), 5000);
+}
+function stopSlideTimer() {
+  if (slideInterval) {
+    window.clearInterval(slideInterval);
+    slideInterval = null;
+  }
+}
+function userSlideNav(index) {
+  showSlide(index);
+  startSlideTimer();
+}
+
+startSlideTimer();
+
+document.querySelector("#slide-prev").addEventListener("click", () => userSlideNav(activeSlide - 1));
+document.querySelector("#slide-next").addEventListener("click", () => userSlideNav(activeSlide + 1));
+dots.forEach((dot, index) => dot.addEventListener("click", () => userSlideNav(index)));
+
+// Touch swipe gestures for mobile (Samsung S24, iPhone 16, iPhone 18 Pro Max, etc.)
+if (hero) {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+
+  hero.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    stopSlideTimer();
+  }, { passive: true });
+
+  hero.addEventListener("touchend", (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    handleHeroSwipe();
+    startSlideTimer();
+  }, { passive: true });
+
+  hero.addEventListener("mouseenter", stopSlideTimer);
+  hero.addEventListener("mouseleave", startSlideTimer);
+
+  function handleHeroSwipe() {
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    // Ensure gesture is predominantly horizontal and exceeds threshold
+    if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX < 0) {
+        userSlideNav(activeSlide + 1);
+      } else {
+        userSlideNav(activeSlide - 1);
+      }
+    }
+  }
+}
 
 const fontThemes = ["default", "editorial", "classic", "modern"];
 let activeFontTheme = 0;
